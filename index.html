@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>医療参照ツール</title>
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1a6b9a">
+  <!-- iOS ホーム画面追加サポート -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="医療参照">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <style>
+    /* ===== リセット・基本 ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f5f5;
+      --surface: #ffffff;
+      --border: #d0d0d0;
+      --text: #1a1a1a;
+      --text-sub: #555;
+      --accent: #1a6b9a;
+      --accent-bg: #eaf3fa;
+      --warn: #7a4400;
+      --warn-bg: #fff5e0;
+      --tag-bg: #e8e8e8;
+      --radius: 10px;
+      --shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #121212;
+        --surface: #1e1e1e;
+        --border: #333;
+        --text: #e8e8e8;
+        --text-sub: #aaa;
+        --accent: #5aabdb;
+        --accent-bg: #1a2f3d;
+        --warn: #f0c060;
+        --warn-bg: #2a1e00;
+        --tag-bg: #2a2a2a;
+        --shadow: 0 1px 4px rgba(0,0,0,0.4);
+      }
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 0 40px;
+    }
+
+    /* ===== ヘッダー ===== */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 16px 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: var(--shadow);
+    }
+    header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-bottom: 10px;
+    }
+    header h1 span {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-sub);
+      margin-left: 8px;
+    }
+    #search {
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 16px; /* 16px以上でiOSズームを防ぐ */
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+      appearance: none;
+    }
+    #search:focus { border-color: var(--accent); }
+
+    /* ===== 項目カード ===== */
+    #item-list {
+      padding: 12px 12px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .item-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .item-card[hidden] { display: none; }
+
+    /* <details>/<summary> で折りたたみ */
+    details summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 16px;
+      user-select: none;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    details summary::-webkit-details-marker { display: none; }
+    .summary-icon {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--text-sub);
+      transition: transform 0.2s;
+    }
+    details[open] .summary-icon { transform: rotate(90deg); }
+    .summary-text { flex: 1; }
+    .summary-title {
+      font-size: 16px;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .summary-label {
+      font-size: 13px;
+      color: var(--text-sub);
+    }
+
+    /* ===== 詳細コンテンツ ===== */
+    .detail-body {
+      padding: 0 16px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .section {
+      margin-top: 14px;
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 4px;
+    }
+    .section p,
+    .section li {
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .section ul, .section ol {
+      padding-left: 18px;
+    }
+    .section li + li { margin-top: 3px; }
+
+    /* 表 */
+    .detail-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+    .detail-table th,
+    .detail-table td {
+      border: 1px solid var(--border);
+      padding: 6px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .detail-table thead th {
+      background: var(--tag-bg);
+      font-weight: 700;
+    }
+    .detail-table tr:nth-child(even) td { background: var(--bg); }
+
+    /* 注意・警告ボックス */
+    .warn-box {
+      background: var(--warn-bg);
+      border-left: 3px solid var(--warn);
+      padding: 8px 12px;
+      border-radius: 0 6px 6px 0;
+      font-size: 13px;
+      color: var(--warn);
+      margin-top: 6px;
+    }
+
+    /* TODO バッジ */
+    .badge-todo {
+      display: inline-block;
+      background: var(--warn-bg);
+      color: var(--warn);
+      border: 1px solid var(--warn);
+      border-radius: 4px;
+      font-size: 11px;
+      padding: 1px 6px;
+      margin-left: 6px;
+      vertical-align: middle;
+      font-weight: 700;
+    }
+
+    /* 出典 */
+    .source-box {
+      background: var(--accent-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+    .source-box dt {
+      font-weight: 700;
+      color: var(--text-sub);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      margin-top: 6px;
+    }
+    .source-box dt:first-child { margin-top: 0; }
+    .source-box dd { margin-left: 0; color: var(--text); }
+
+    /* PDFボタン */
+    .pdf-btn {
+      display: block;
+      width: 100%;
+      margin-top: 14px;
+      padding: 13px;
+      background: var(--accent);
+      color: #fff;
+      text-align: center;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .pdf-btn:hover { opacity: 0.9; }
+    .pdf-btn-disabled {
+      background: var(--tag-bg);
+      color: var(--text-sub);
+      cursor: default;
+    }
+
+    /* 更新日 */
+    .updated-at {
+      font-size: 12px;
+      color: var(--text-sub);
+      text-align: right;
+      margin-top: 10px;
+    }
+
+    /* インストールバナー */
+    #install-banner {
+      margin: 10px 12px 0;
+      padding: 12px 14px;
+      background: var(--accent-bg);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius);
+      font-size: 13px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    #install-banner .ib-body { flex: 1; }
+    #install-banner h3 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 5px;
+    }
+    #install-banner p { margin: 2px 0; line-height: 1.6; }
+    #install-btn {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 7px 14px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    #install-close {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      color: var(--text-sub);
+      font-size: 18px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0;
+    }
+    #sw-status { font-size: 12px; color: var(--text-sub); margin-top: 4px; }
+
+    /* 免責 */
+    #disclaimer {
+      margin: 16px 12px 0;
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 12px;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    /* 空状態 */
+    #empty-msg {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-sub);
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>医療参照ツール <span>療養型病院 日常確認用</span></h1>
+  <input type="search" id="search" placeholder="キーワードで検索..." autocomplete="off">
+</header>
+
+<div id="install-banner" hidden>
+  <div class="ib-body">
+    <h3>📱 スマホでオフライン利用する</h3>
+    <p id="ib-url" style="font-family:monospace; color:var(--accent)"></p>
+    <p id="ib-ios" hidden>Safari の <strong>共有ボタン（□↑）→「ホーム画面に追加」</strong></p>
+    <p id="ib-android" hidden>Chrome のメニュー → <strong>「ホーム画面に追加」</strong></p>
+    <button id="install-btn" hidden>ホーム画面に追加</button>
+    <p id="sw-status">⏳ オフライン用データを準備中…</p>
+  </div>
+  <button id="install-close" title="閉じる（次回から表示しない）">×</button>
+</div>
+
+<p id="disclaimer">
+  このツールは個人用の参照補助です。診療・ケアの判断は必ず最新の公式資料・施設基準・主治医の指示に従ってください。
+</p>
+
+<div id="item-list"></div>
+<p id="empty-msg" hidden>該当する項目がありません</p>
+
+<script>
+// ============================================================
+//  データ定義
+//  1項目を追加するには、ITEMS 配列の末尾に以下テンプレートを
+//  コピーして値を埋めてください。HTMLは変更不要です。
+// ============================================================
+
+/*
+  --- 項目追加テンプレート ---
+  {
+    id: "unique_id",              // 重複しない英数字ID
+    title: "項目名",
+    shortLabel: "一言説明",
+    keywords: ["検索", "キーワード"],   // 検索に使うタグ
+    summary: `
+      <p>ここに要約を書く（HTML使用可）</p>
+    `,
+    trickyPoints: `
+      <ul>
+        <li>迷いやすいポイント1</li>
+      </ul>
+    `,
+    noteTemplate: "記録メモ欄テンプレート文字列",
+    sourceTitle: "出典資料名",
+    sourceFile: "pdf/filename.pdf",  // pdf/フォルダに置いたファイル名
+    sourcePages: "p.1〜5",
+    updatedAt: "2024-xx-xx",
+  },
+*/
+
+const ITEMS = [
+
+  // ============================================================
+  //  1. 医療区分
+  //  出典: 令和6年度診療報酬改定 療養病棟入院基本料 施設基準（厚生労働省）
+  //  参考: https://www.pt-ot-st.net/contents4/medical-treatment-reiwa-6/department/2277
+  // ============================================================
+  {
+    id: "iryo_kubun",
+    title: "医療区分",
+    shortLabel: "療養病棟の入院基本料算定区分（令和6年改定・30分類）",
+    keywords: ["医療区分", "療養病棟", "入院基本料", "ADL区分", "令和6年", "中心静脈栄養", "経腸栄養"],
+    summary: `
+      <p style="font-size:12px; color:var(--text-sub); margin-bottom:6px">令和6年改定：疾患・状態／処置等／ADL の3軸で評価（計30分類）</p>
+
+      <p style="font-weight:700; margin-bottom:4px">疾患・状態</p>
+      <table class="detail-table">
+        <thead><tr><th style="width:4em">区分</th><th>該当する疾患・状態（代表例）</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>3</strong></td>
+            <td>スモン／<strong>常時監視・管理</strong>が必要な状態</td>
+          </tr>
+          <tr>
+            <td><strong>2</strong></td>
+            <td>
+              筋ジストロフィー症・多発性硬化症・ALS<br>
+              パーキンソン病関連疾患・指定難病（重症）<br>
+              頸椎損傷による四肢麻痺<br>
+              COPD（ヒュー・ジョーンズV度）<br>
+              消化管出血の反復継続状態
+            </td>
+          </tr>
+          <tr><td><strong>1</strong></td><td>上記以外</td></tr>
+        </tbody>
+      </table>
+
+      <p style="font-weight:700; margin:10px 0 4px">処置等</p>
+      <table class="detail-table">
+        <thead><tr><th style="width:4em">区分</th><th>該当する処置（代表例）</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>3</strong></td>
+            <td>
+              中心静脈栄養（対象疾患あり <em>または</em> 開始<u>30日以内</u>）<br>
+              人工呼吸器／気管切開・挿管＋発熱<br>
+              ドレーン・胸腹腔洗浄<br>
+              感染症による隔離室管理<br>
+              酸素療法（高密度治療）
+            </td>
+          </tr>
+          <tr>
+            <td><strong>2</strong></td>
+            <td>
+              中心静脈栄養（対象疾患なし・開始<u>30日超</u>）<span style="color:var(--warn)">←R6改定で3→2</span><br>
+              肺炎・尿路感染等への抗菌薬投与<br>
+              褥瘡処置（重度）・喀痰吸引（1日8回以上）<br>
+              経腸栄養（発熱・嘔吐伴う）・酸素療法（高密度以外）<br>
+              リハビリテーション（発症30日以内）
+            </td>
+          </tr>
+          <tr><td><strong>1</strong></td><td>上記以外</td></tr>
+        </tbody>
+      </table>
+
+      <p style="font-weight:700; margin:10px 0 4px">ADL区分</p>
+      <table class="detail-table">
+        <thead><tr><th style="width:4em">区分</th><th>スコア目安</th></tr></thead>
+        <tbody>
+          <tr><td><strong>3</strong></td><td>23点以下（ほぼ全介助）</td></tr>
+          <tr><td><strong>2</strong></td><td>24〜47点</td></tr>
+          <tr><td><strong>1</strong></td><td>48点以上（比較的自立）</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:13px; margin-top:8px; color:var(--text-sub)">新設：経腸栄養管理加算 300点/日（7日限度）</p>
+    `,
+    trickyPoints: `
+      <ul>
+        <li><strong>中心静脈栄養の区分が変わった（令和6年改定）</strong>：対象疾患がある場合または開始30日以内→区分3、それ以外の長期継続→区分2</li>
+        <li>「疾患・状態」と「処置等」は<strong>別々に評価</strong>し、高い方を採用するのではなく組み合わせで30分類のいずれかに決まる</li>
+        <li>ADL区分は、別紙8「医療区分・ADL区分等に係る評価票」を用いて<strong>毎日</strong>評価・記録する</li>
+        <li>「喀痰吸引1日8回以上」は開始時間・回数の記録が算定根拠となる</li>
+        <li>「高密度治療を要する酸素療法（区分3）」と通常の酸素療法（区分2）の境界は施設で定義を統一すること</li>
+      </ul>
+    `,
+    noteTemplate: "疾患・状態 医療区分：　区分（主な根拠：　　　　）\n処置等 医療区分：　　区分（主な根拠：　　　　）\nADL区分：　　区分（スコア：　　）\n評価日：",
+    sourceTitle: "令和6年度診療報酬改定 療養病棟入院基本料 施設基準（厚生労働省）",
+    sourceFile: "pdf/iryo_kubun_hyoka.pdf",
+    sourcePages: "要確認（別紙8 評価票）",
+    updatedAt: "2026-04-06（令和6年度改定内容を反映）",
+  },
+
+  // ============================================================
+  //  2. 障害高齢者の日常生活自立度
+  //  出典: 「障害老人の日常生活自立度（寝たきり度）判定基準」
+  //        厚生省老健局長通知 老健第102-2号（平成3年11月18日）
+  //  参考: https://www.tyojyu.or.jp/net/kaigo-seido/kaigo-hoken/shougai-jiritsu.html
+  //        https://www.mhlw.go.jp/file/06-Seisakujouhou-12300000-Roukenkyoku/0000077382.pdf
+  // ============================================================
+  {
+    id: "shougai_jiritsu",
+    title: "障害高齢者の日常生活自立度",
+    shortLabel: "寝たきり度の判定（ランクJ〜C2）",
+    keywords: ["日常生活自立度", "寝たきり度", "ランクJ", "ランクA", "ランクB", "ランクC", "ADL"],
+    summary: `
+      <table class="detail-table">
+        <thead><tr><th style="width:4em">ランク</th><th>状態の目安</th><th>移動・生活の状況</th></tr></thead>
+        <tbody>
+          <tr><td><strong>J1</strong></td><td>生活自立</td><td>交通機関を使って外出できる</td></tr>
+          <tr><td><strong>J2</strong></td><td>生活自立</td><td>隣近所程度なら外出できる</td></tr>
+          <tr><td><strong>A1</strong></td><td>準寝たきり</td><td>介助で外出。日中はほぼベッドを離れて生活</td></tr>
+          <tr><td><strong>A2</strong></td><td>準寝たきり</td><td>外出ほぼなし。日中も寝起きを繰り返す</td></tr>
+          <tr><td><strong>B1</strong></td><td>寝たきり（座位可）</td><td><strong>自力で</strong>車いす移乗。食事・排泄はベッド外</td></tr>
+          <tr><td><strong>B2</strong></td><td>寝たきり（座位可）</td><td><strong>介助で</strong>車いす移乗。食事・排泄にも介助要</td></tr>
+          <tr><td><strong>C1</strong></td><td>寝たきり（重度）</td><td>1日中ベッド。自力で<strong>寝返りできる</strong></td></tr>
+          <tr><td><strong>C2</strong></td><td>寝たきり（最重度）</td><td>1日中ベッド。自力での<strong>寝返り不可</strong></td></tr>
+        </tbody>
+      </table>
+    `,
+    trickyPoints: `
+      <ul>
+        <li><strong>B1とB2の分かれ目</strong>：「自力で車いすに移乗できるか」。介助が必要→B2</li>
+        <li><strong>C1とC2の分かれ目</strong>：「自力で寝返りができるか」。できない→C2</li>
+        <li>認知症があっても身体的に外出できればJ判定もあり得る（認知症自立度と<strong>別軸</strong>で評価）</li>
+        <li>「現在の状態」で評価。「本来できるはず」という潜在能力で評価しない</li>
+        <li>介護保険の認定調査でも同一基準を使うが、医療機関での使用目的（診療報酬）とは異なる</li>
+        <li>同じ患者でも評価者によりブレが生じやすい（施設内で判定基準を統一しておく）</li>
+      </ul>
+    `,
+    noteTemplate: "寝たきり度：ランク（　　）\n評価日：\n評価者：\n主な根拠（移動・外出状況など）：",
+    sourceTitle: "障害老人の日常生活自立度（寝たきり度）判定基準（厚生省老健局長通知、平成3年）",
+    sourceFile: "pdf/shougai_jiritsu.pdf",
+    sourcePages: "全1ページ（厚生省老健局長通知別紙）",
+    updatedAt: "2026-04-06（制定1991年・基準改訂なし）",
+  },
+
+  // ============================================================
+  //  3. 認知症高齢者の日常生活自立度
+  //  出典: 「認知症高齢者の日常生活自立度判定基準」
+  //        厚生省老健局長通知（平成5年）
+  //  参考: https://www.tyojyu.or.jp/net/kaigo-seido/kaigo-hoken/ninchi-jiritsu.html
+  //        https://www.mhlw.go.jp/topics/2013/02/dl/tp0215-11-11d.pdf
+  // ============================================================
+  {
+    id: "ninchisho_jiritsu",
+    title: "認知症高齢者の日常生活自立度",
+    shortLabel: "認知症の生活自立度判定（ランクⅠ〜M）",
+    keywords: ["認知症", "日常生活自立度", "ランクI", "ランクII", "ランクIII", "ランクIV", "ランクM", "BPSD", "徘徊", "失禁"],
+    summary: `
+      <table class="detail-table">
+        <thead><tr><th style="width:4em">ランク</th><th>状態</th><th>典型的な症状・行動例</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Ⅰ</strong></td><td>認知症あり・ほぼ自立</td><td>一人暮らしも可能な程度</td></tr>
+          <tr><td><strong>Ⅱa</strong></td><td>注意すれば自立<br><u>家庭外</u>で支障</td><td>道に迷う、買い物・金銭管理でミス</td></tr>
+          <tr><td><strong>Ⅱb</strong></td><td>注意すれば自立<br><u>家庭内</u>でも支障</td><td>服薬管理困難、電話応対困難、留守番できない</td></tr>
+          <tr><td><strong>Ⅲa</strong></td><td>介護が必要<br><u>日中</u>中心に症状</td><td>着替え・食事・排泄困難、徘徊・失禁・火の不始末</td></tr>
+          <tr><td><strong>Ⅲb</strong></td><td>介護が必要<br><u>夜間</u>中心に症状</td><td>Ⅲaと同様の症状が主に夜間に出現</td></tr>
+          <tr><td><strong>Ⅳ</strong></td><td>常時介護が必要</td><td>Ⅲと同様の症状が頻繁。常に目が離せない</td></tr>
+          <tr><td><strong>M</strong></td><td>専門医療が必要</td><td>せん妄・妄想・興奮・自傷他害、または重篤な身体疾患合併</td></tr>
+        </tbody>
+      </table>
+    `,
+    trickyPoints: `
+      <ul>
+        <li><strong>ⅡaとⅡbの分かれ目</strong>：「家の外か中か」。家庭内で留守番できれば Ⅱa、家庭内でも困難なら Ⅱb</li>
+        <li><strong>ⅢaとⅢbの分かれ目</strong>：「日中か夜間か」が問題行動の主な出現時間帯</li>
+        <li><strong>ランクMは重症度ではない</strong>：著しい精神症状や重篤な身体合併症により<u>専門医療が必要</u>な状態を指す。身体機能は比較的保たれていても M になり得る</li>
+        <li>介護保険の一次判定では<strong>Ⅱ以上</strong>が「認知症あり」として扱われることが多い</li>
+        <li>障害高齢者の自立度（寝たきり度）と<strong>別軸</strong>。混同しない（例：寝たきりでも認知症軽度の場合あり）</li>
+        <li>評価は現時点での「最も頻繁に見られる状態」で判定し、偶発的な良い状態で判定しない</li>
+      </ul>
+    `,
+    noteTemplate: "認知症自立度：ランク（　　）\n評価日：\n評価者：\n主な根拠（症状・行動場面）：",
+    sourceTitle: "認知症高齢者の日常生活自立度判定基準（厚生省老健局長通知、平成5年）",
+    sourceFile: "pdf/ninchisho_jiritsu.pdf",
+    sourcePages: "全1ページ（厚生省老健局長通知別紙）",
+    updatedAt: "2026-04-06（制定1993年・基準改訂なし）",
+  },
+
+  // ============================================================
+  //  4. 高齢者で見直しやすい薬（PIMs）
+  //  出典: 高齢者の安全な薬物療法ガイドライン2025（日本老年医学会、2025年6月）
+  //        ※2015年版から10年ぶりの改訂
+  //  参考: https://www.carenet.com/news/general/carenet/61245
+  //        https://geriatrics.jp/cga/高齢者に注意して使用すべき薬とは/
+  // ============================================================
+  {
+    id: "koureisha_yakuzai",
+    title: "高齢者で見直しやすい薬",
+    shortLabel: "PIMs（潜在的に不適切な薬物）と減薬の考え方 ─ 2025年版",
+    keywords: ["PIM", "ポリファーマシー", "減薬", "ベンゾジアゼピン", "抗コリン", "NSAIDs", "スルホニル尿素", "老年医学", "GLP1", "ワルファリン"],
+    summary: `
+      <p style="font-size:12px; color:var(--text-sub); margin-bottom:6px">日本老年医学会ガイドライン2025年版（10年ぶり改訂）／ポリファーマシー目安：5剤以上で要注意、10剤以上を優先見直し</p>
+
+      <table class="detail-table">
+        <thead><tr><th>カテゴリ</th><th>代表薬</th><th>主なリスク</th></tr></thead>
+        <tbody>
+          <tr><td>ベンゾジアゼピン系・Z薬</td><td>ジアゼパム、トリアゾラム、エチゾラム、ゾルピデム</td><td>転倒・骨折、過鎮静、認知機能低下</td></tr>
+          <tr><td>三環系抗うつ薬</td><td>アミトリプチリン、イミプラミン</td><td>抗コリン作用、起立性低血圧、QT延長</td></tr>
+          <tr><td>第一世代抗ヒスタミン薬</td><td>d-クロルフェニラミン（ポララ）</td><td>過鎮静、転倒、せん妄</td></tr>
+          <tr><td>抗コリン薬（過活動膀胱）</td><td>オキシブチニン（バップフォー）</td><td>尿閉、便秘、認知機能低下、せん妄</td></tr>
+          <tr><td>NSAIDs</td><td>ジクロフェナク、ロキソプロフェン</td><td>消化管出血、腎機能低下、心不全増悪</td></tr>
+          <tr><td>長時間作用型 SU 薬</td><td>グリベンクラミド（オイグルコン）</td><td>遷延性低血糖 →DPP-4阻害薬への変更検討</td></tr>
+          <tr><td>アスピリン（一次予防）</td><td>低用量アスピリン（75〜100mg）</td><td>75歳以上：出血リスク＞予防効果</td></tr>
+          <tr><td>利尿薬（過量・長期）</td><td>フロセミド、スピロノラクトン</td><td>低Na・低K血症、転倒</td></tr>
+          <tr><td>🆕 GLP-1受容体作動薬</td><td>セマグルチド、リラグルチド など</td><td>フレイル・サルコペニア悪化（体重・筋肉量低下）</td></tr>
+          <tr><td>🆕 ワルファリン（心房細動）</td><td>ワルファリン（正常〜中等度腎機能）</td><td>DOACより有効性・安全性が劣る →DOAC推奨</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px; color:var(--text-sub); margin-top:6px">🆕 = 2025年版で新規追加。H2ブロッカー・複数抗血栓薬の併用は2025年版で削除。</p>
+    `,
+    trickyPoints: `
+      <ul>
+        <li><strong>H2ブロッカーが2025年版で削除</strong>：2015年版では慎重投与リスト入りだったが今版で除外。腎機能低下時の用量調整は引き続き必要（→「腎機能別の注意薬」参照）</li>
+        <li><strong>GLP-1受容体作動薬が新規追加</strong>：フレイル・サルコペニアのある高齢者では体重減少・筋肉量低下に注意。一律禁忌ではなくリスク評価が必要</li>
+        <li>転倒リスクは睡眠薬だけでなく、降圧薬（過降圧）・抗てんかん薬・抗精神病薬にも注意</li>
+        <li>OTC薬・市販の風邪薬・目薬（散瞳薬）にも抗コリン成分が入ることがある</li>
+        <li>日本版抗コリン薬リスクスケール（J-ACRS）が2025年版で新たに追加された</li>
+        <li>腎機能低下がある場合は、ポリファーマシー確認と腎機能別用量調整を同時に行う</li>
+      </ul>
+    `,
+    noteTemplate: "服用薬剤数：　　剤（うち要注意薬候補：　　剤）\n見直し候補薬：\n主治医への相談日：\n代替薬案：",
+    sourceTitle: "高齢者の安全な薬物療法ガイドライン2025（日本老年医学会、2025年6月発行）",
+    sourceFile: "",
+    sourcePages: "要確認（メジカルビュー社刊 ISBN978-4-7583-0497-9）",
+    updatedAt: "2026-04-06（2025年6月版を反映）",
+  },
+
+  // ============================================================
+  //  5. 腎機能別の注意薬
+  //  出典: 腎機能低下時に最も注意の必要な薬剤投与量一覧 2025年改訂38版
+  //        （日本腎臓病薬物療法学会: JSNP）
+  //        CKD診療ガイド2024（日本腎臓学会）
+  //  参考: https://jsnp.org/files/dosage_recommendations_38.pdf
+  //        https://jsn.or.jp/data/gl2024_ckd_ch12.pdf
+  // ============================================================
+  {
+    id: "jinkino_yakuzai",
+    title: "腎機能別の注意薬",
+    shortLabel: "eGFR・Ccr別の用量調整・禁忌（JSNP 2025年38版）",
+    keywords: ["腎機能", "eGFR", "Ccr", "CKD", "クレアチニン", "腎排泄", "用量調整", "禁忌", "DOAC", "メトホルミン", "プレガバリン", "ファモチジン"],
+    summary: `
+      <p style="font-size:12px; color:var(--text-sub); margin-bottom:6px">JSNP 2025年38版（年1〜2回改訂）。数値は目安 ─ 各薬の添付文書・JSNP一覧を必ず参照。</p>
+      <table class="detail-table">
+        <thead><tr><th>薬剤</th><th>eGFR / Ccr 目安</th><th>主な懸念</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>メトホルミン</strong></td>
+            <td>45〜60：注意（上限1,500mg/日）<br>30〜45：慎重（上限750mg/日）<br>&lt;30：<strong>禁忌</strong></td>
+            <td>乳酸アシドーシス</td>
+          </tr>
+          <tr>
+            <td><strong>ダビガトラン</strong><br><small>プラザキサ</small></td>
+            <td>30〜50 Ccr：150mg→110mg×2/日に減量<br>&lt;30 Ccr：<strong>禁忌</strong></td>
+            <td>出血リスク増大</td>
+          </tr>
+          <tr>
+            <td><strong>アピキサバン</strong><br><small>エリキュース</small></td>
+            <td>SCr≥1.5＋（年齢≥80 or 体重≤60kg）の<strong>2項目以上</strong>：5mg→<strong>2.5mg</strong>×2/日</td>
+            <td>出血リスク増大</td>
+          </tr>
+          <tr>
+            <td><strong>リバーロキサバン</strong><br><small>イグザレルト</small></td>
+            <td>15〜50：減量考慮（適応ごとに異なる）<br>&lt;15：<strong>禁忌</strong></td>
+            <td>出血リスク増大</td>
+          </tr>
+          <tr>
+            <td><strong>エドキサバン</strong><br><small>リクシアナ</small></td>
+            <td>15〜50 Ccr：60mg→<strong>30mg</strong>に減量<br>&lt;15 Ccr：<strong>禁忌</strong></td>
+            <td>出血リスク増大</td>
+          </tr>
+          <tr>
+            <td><strong>プレガバリン</strong><br><small>リリカ</small></td>
+            <td>&lt;60：eGFR別用量表で減量<br>透析：HD後に補充用量</td>
+            <td>傾眠、ふらつき、転倒、浮腫</td>
+          </tr>
+          <tr>
+            <td><strong>ファモチジン</strong><br><small>ガスター</small></td>
+            <td>&lt;50：半量 or 投与間隔2倍に延長<br>透析：透析後に投与</td>
+            <td>意識障害、せん妄</td>
+          </tr>
+          <tr>
+            <td><strong>アロプリノール</strong><br><small>ザイロリック</small></td>
+            <td>Ccr &lt;60：上限100mg/日等（腎機能別設定）</td>
+            <td>重篤な皮膚障害（SJS等）</td>
+          </tr>
+          <tr>
+            <td><strong>NSAIDs</strong></td>
+            <td>eGFR &lt;60 があれば<strong>原則回避</strong></td>
+            <td>腎機能悪化、Na貯留、心不全増悪</td>
+          </tr>
+          <tr>
+            <td><strong>バンコマイシン</strong></td>
+            <td>腎機能に応じてTDM必須・投与間隔延長</td>
+            <td>腎毒性、耳毒性</td>
+          </tr>
+          <tr>
+            <td><strong>アミノグリコシド系</strong></td>
+            <td>腎機能に応じて投与間隔延長・TDM推奨</td>
+            <td>腎毒性、耳毒性</td>
+          </tr>
+          <tr>
+            <td><strong>モルヒネ</strong></td>
+            <td>eGFR &lt;30：活性代謝物（M6G）蓄積</td>
+            <td>過鎮静、呼吸抑制 →フェンタニルへ変更検討</td>
+          </tr>
+          <tr>
+            <td><strong>SU薬</strong><br><small>グリベンクラミド等</small></td>
+            <td>腎機能低下で排泄遅延</td>
+            <td>遷延性低血糖</td>
+          </tr>
+        </tbody>
+      </table>
+    `,
+    trickyPoints: `
+      <ul>
+        <li><strong>高齢・低体重の女性では eGFR が過大評価されやすい</strong>：筋肉量が少ないと SCr が低く保たれ、見かけ上 eGFR が高くなる</li>
+        <li><strong>Cockcroft-Gault 式は実測体重を使用</strong>。高度肥満では補正体重（LBW等）を使うことも。薬剤によってeGFR/Ccrどちらを使うか異なる</li>
+        <li><strong>DOAC の減量基準は薬剤ごとに異なる</strong>：ダビガトランはCcr基準、アピキサバンはSCr・年齢・体重の複合基準、など一律に「半量」とはならない</li>
+        <li>造影剤（ヨード系）使用前後のメトホルミン一時中止：施設でのルール確認が必要</li>
+        <li>腎機能は変動するため<strong>定期的な採血再評価</strong>が重要（入院患者では少なくとも月1回）</li>
+        <li>JSNP一覧は毎年改訂されるため、最新版（現在38版）を確認すること</li>
+      </ul>
+    `,
+    noteTemplate: "直近 eGFR：　　mL/min/1.73m²（採血日：　　）\nCcr（Cockcroft-Gault）：　　mL/min\n確認した薬剤と対応：\n次回採血予定：",
+    sourceTitle: "腎機能低下時に最も注意の必要な薬剤投与量一覧 2025年改訂38版（JSNP）／CKD診療ガイド2024（日本腎臓学会）",
+    sourceFile: "pdf/jsnp_yakuzai_38.pdf",
+    sourcePages: "JSNP 38版 PDF・CKD診療ガイド2024 第12章",
+    updatedAt: "2026-04-06（JSNP 2025年38版・CKD診療ガイド2024を反映）",
+  },
+
+]; // ITEMS 配列ここまで
+
+// ============================================================
+//  UIレンダリング
+// ============================================================
+
+function buildPdfLink(item) {
+  if (item.sourceFile) {
+    // file:// の場合は target="_blank" だと iOS Safari でブロックされる場合があるため同タブで開く
+    const target = location.protocol === 'file:' ? '' : ' target="_blank" rel="noopener"';
+    return `<a class="pdf-btn" href="${item.sourceFile}"${target}>公式PDFを開く（${item.sourceTitle}）</a>`;
+  }
+  return `<span class="pdf-btn pdf-btn-disabled">PDFファイル未設定（pdf/フォルダに配置後 sourceFile を更新）</span>`;
+}
+
+function renderItem(item) {
+  const card = document.createElement("div");
+  card.className = "item-card";
+  card.dataset.id = item.id;
+  card.dataset.search = [item.title, ...(item.keywords || [])].join(" ").toLowerCase();
+
+  card.innerHTML = `
+    <details>
+      <summary>
+        <span class="summary-icon">▶</span>
+        <span class="summary-text">
+          <span class="summary-title">${item.title}</span>
+          <span class="summary-label">${item.shortLabel}</span>
+        </span>
+      </summary>
+      <div class="detail-body">
+
+        <div class="section" style="margin-top:10px">
+          ${item.summary}
+        </div>
+
+        <div class="section">
+          <p class="section-title">迷いやすいポイント</p>
+          ${item.trickyPoints}
+        </div>
+
+        <div class="section">
+          <p class="section-title">記載メモ（テンプレート）</p>
+          <pre style="font-size:13px; white-space:pre-wrap; color:var(--text-sub); background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:10px;">${item.noteTemplate}</pre>
+        </div>
+
+        <div class="section">
+          <p class="section-title">出典</p>
+          <dl class="source-box">
+            <dt>資料名</dt>
+            <dd>${item.sourceTitle}</dd>
+            <dt>該当ページ</dt>
+            <dd>${item.sourcePages}</dd>
+          </dl>
+          ${buildPdfLink(item)}
+        </div>
+
+        <p class="updated-at">更新日: ${item.updatedAt}</p>
+
+      </div>
+    </details>
+  `;
+  return card;
+}
+
+const listEl = document.getElementById("item-list");
+const emptyEl = document.getElementById("empty-msg");
+
+// 全項目を一度描画
+ITEMS.forEach(item => listEl.appendChild(renderItem(item)));
+
+// ============================================================
+//  検索
+// ============================================================
+document.getElementById("search").addEventListener("input", function () {
+  const q = this.value.trim().toLowerCase();
+  let visible = 0;
+  document.querySelectorAll(".item-card").forEach(card => {
+    const hit = !q || card.dataset.search.includes(q);
+    card.hidden = !hit;
+    if (hit) visible++;
+  });
+  emptyEl.hidden = visible > 0;
+});
+
+// ============================================================
+//  PWA: Service Worker 登録 + インストールバナー
+// ============================================================
+
+(function () {
+  // file:// で開いている場合はサーバー不要・サービスワーカー不要なのでスキップ
+  if (location.protocol === 'file:') return;
+
+  // すでにホーム画面から起動している場合はバナー不要
+  const isStandalone =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true;
+  if (isStandalone || localStorage.getItem('install-dismissed')) return;
+
+  const banner   = document.getElementById('install-banner');
+  const swStatus = document.getElementById('sw-status');
+  const urlEl    = document.getElementById('ib-url');
+  const iosEl    = document.getElementById('ib-ios');
+  const androidEl= document.getElementById('ib-android');
+  const installBtn = document.getElementById('install-btn');
+
+  // バナーを表示
+  banner.hidden = false;
+
+  // アクセス中のURLを表示（スマホ側で入力する参考用）
+  urlEl.textContent = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
+
+  // OS判定
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  if (isIOS) {
+    iosEl.hidden = false;
+  } else {
+    androidEl.hidden = false;
+  }
+
+  // 閉じるボタン
+  document.getElementById('install-close').addEventListener('click', () => {
+    localStorage.setItem('install-dismissed', '1');
+    banner.hidden = true;
+  });
+
+  // Android Chrome: インストールプロンプトをキャッチ
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.hidden = false;
+    androidEl.hidden = true; // 手動手順は不要になるので隠す
+  });
+  installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    if (outcome === 'accepted') {
+      localStorage.setItem('install-dismissed', '1');
+      banner.hidden = true;
+    }
+  });
+
+  // Service Worker 登録
+  if (!('serviceWorker' in navigator)) {
+    swStatus.textContent = '⚠️ このブラウザはオフライン機能に対応していません';
+    return;
+  }
+
+  // まず現在のコントローラーを確認（再読み込み時など SW がすでに動いている場合）
+  if (navigator.serviceWorker.controller) {
+    swStatus.textContent = '✅ オフライン利用可能（PDFも含む）';
+  }
+
+  // SW を登録し、ready（active 状態になった時点）で確定表示
+  // navigator.serviceWorker.ready は SW が activated になると必ず resolve する
+  navigator.serviceWorker.register('./sw.js')
+    .then(() => navigator.serviceWorker.ready)
+    .then(() => {
+      swStatus.textContent = '✅ オフライン利用可能（PDFも含む）';
+    })
+    .catch(() => {
+      swStatus.textContent = '⚠️ オフライン機能の設定に失敗（HTTP経由でのアクセスが必要です）';
+    });
+}());
+</script>
+</body>
+</html>
