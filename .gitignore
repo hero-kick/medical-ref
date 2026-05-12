@@ -2,6 +2,11 @@
 build_standalone.py
 build_nojs.js
 _check.js
+_check_*.js
+_std_check_*.js
+_extract*.py
+_backup_*.html
+_*_tmp.txt
 _items_tmp.js
 items.json
 test.html

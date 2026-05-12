@@ -252,6 +252,9 @@
       font-size: 15px;
       font-weight: 700;
       letter-spacing: 0.02em;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
     }
     .pdf-btn:hover { opacity: 0.9; }
     .pdf-btn-disabled {
@@ -268,51 +271,6 @@
       margin-top: 10px;
     }
 
-    /* インストールバナー */
-    #install-banner {
-      margin: 10px 12px 0;
-      padding: 12px 14px;
-      background: var(--accent-bg);
-      border: 1px solid var(--accent);
-      border-radius: var(--radius);
-      font-size: 13px;
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-    }
-    #install-banner .ib-body { flex: 1; }
-    #install-banner h3 {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--accent);
-      margin-bottom: 5px;
-    }
-    #install-banner p { margin: 2px 0; line-height: 1.6; }
-    #install-btn {
-      display: inline-block;
-      margin-top: 8px;
-      padding: 7px 14px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    #install-close {
-      flex-shrink: 0;
-      width: 28px;
-      height: 28px;
-      border: none;
-      background: transparent;
-      color: var(--text-sub);
-      font-size: 18px;
-      cursor: pointer;
-      line-height: 1;
-      padding: 0;
-    }
-    #sw-status { font-size: 12px; color: var(--text-sub); margin-top: 4px; }
 
     /* 免責 */
     #disclaimer {
@@ -342,17 +300,6 @@
   <input type="search" id="search" placeholder="キーワードで検索..." autocomplete="off">
 </header>
 
-<div id="install-banner" hidden>
-  <div class="ib-body">
-    <h3>📱 スマホでオフライン利用する</h3>
-    <p id="ib-url" style="font-family:monospace; color:var(--accent)"></p>
-    <p id="ib-ios" hidden>Safari の <strong>共有ボタン（□↑）→「ホーム画面に追加」</strong></p>
-    <p id="ib-android" hidden>Chrome のメニュー → <strong>「ホーム画面に追加」</strong></p>
-    <button id="install-btn" hidden>ホーム画面に追加</button>
-    <p id="sw-status">⏳ オフライン用データを準備中…</p>
-  </div>
-  <button id="install-close" title="閉じる（次回から表示しない）">×</button>
-</div>
 
 <p id="disclaimer">
   このツールは個人用の参照補助です。診療・ケアの判断は必ず最新の公式資料・施設基準・主治医の指示に従ってください。
@@ -418,10 +365,13 @@ const ITEMS = [
             <td><strong>2</strong></td>
             <td>
               筋ジストロフィー症・多発性硬化症・ALS<br>
-              パーキンソン病関連疾患・指定難病（重症）<br>
+              パーキンソン病関連疾患（ホーエン・ヤールStage<u>3</u>以上かつ生活機能障害度<u>Ⅱ/Ⅲ度</u>）<br>
+              その他の指定難病（特定疾患治療研究事業の疾患）<br>
               頸椎損傷による四肢麻痺<br>
-              COPD（ヒュー・ジョーンズV度）<br>
-              消化管出血の反復継続状態
+              COPD（ヒュー・ジョーンズ<u>Ⅴ度</u>）<br>
+              透析（人工腎臓・持続緩徐式血液濾過・腹膜灌流・血漿交換）<br>
+              消化管出血・出血性膀胱炎の反復継続状態<br>
+              悪性腫瘍（医療用麻薬等の<strong>疼痛コントロール</strong>が必要な場合）
             </td>
           </tr>
           <tr><td><strong>1</strong></td><td>上記以外</td></tr>
@@ -435,21 +385,29 @@ const ITEMS = [
           <tr>
             <td><strong>3</strong></td>
             <td>
+              24時間持続点滴（経口摂取困難・循環動態不安定等、<u>7日間限定</u>）<br>
               中心静脈栄養（対象疾患あり <em>または</em> 開始<u>30日以内</u>）<br>
-              人工呼吸器／気管切開・挿管＋発熱<br>
+              人工呼吸器（使用中）<br>
+              気管切開・挿管（体温<u>38.0℃以上</u>の発熱あり）<br>
               ドレーン・胸腹腔洗浄<br>
               感染症による隔離室管理<br>
-              酸素療法（高密度治療）
+              酸素療法（酸素非投与下でSpO₂<u>90%以下</u>の状態）
             </td>
           </tr>
           <tr>
             <td><strong>2</strong></td>
             <td>
               中心静脈栄養（対象疾患なし・開始<u>30日超</u>）<span style="color:var(--warn)">←R6改定で3→2</span><br>
-              肺炎・尿路感染等への抗菌薬投与<br>
-              褥瘡処置（重度）・喀痰吸引（1日8回以上）<br>
-              経腸栄養（発熱・嘔吐伴う）・酸素療法（高密度以外）<br>
-              リハビリテーション（発症30日以内）
+              気管切開・挿管（発熱なし）<br>
+              脱水＋発熱への治療（<u>7日限</u>）<br>
+              肺炎・尿路感染症への抗菌薬投与<br>
+              褥瘡（第<u>2</u>度以上または<u>2か所</u>以上）<br>
+              創傷・皮膚潰瘍・蜂巣炎等（1日<u>2回以上</u>のガーゼや創傷被覆材の交換が必要）<br>
+              経腸栄養（発熱・嘔吐伴う、<u>7日限</u>）<br>
+              喀痰吸引（1日<u>8回</u>以上）<br>
+              せん妄への治療（<u>7日限</u>）・頻回血糖検査（1日<u>3回</u>以上、<u>3日限</u>）<br>
+              酸素療法（SpO₂ 90%以下の状態を除く）<br>
+              リハビリテーション（発症<u>30日以内</u>）
             </td>
           </tr>
           <tr><td><strong>1</strong></td><td>上記以外</td></tr>
@@ -458,22 +416,28 @@ const ITEMS = [
 
       <p style="font-weight:700; margin:10px 0 4px">ADL区分</p>
       <table class="detail-table">
-        <thead><tr><th style="width:4em">区分</th><th>スコア目安</th></tr></thead>
+        <thead><tr><th style="width:4em">区分</th><th>合計スコア（0〜24点）</th></tr></thead>
         <tbody>
-          <tr><td><strong>3</strong></td><td>23点以下（ほぼ全介助）</td></tr>
-          <tr><td><strong>2</strong></td><td>24〜47点</td></tr>
-          <tr><td><strong>1</strong></td><td>48点以上（比較的自立）</td></tr>
+          <tr><td><strong>3</strong></td><td>23〜24点（ほぼ全介助）</td></tr>
+          <tr><td><strong>2</strong></td><td>11〜22点（中程度介助）</td></tr>
+          <tr><td><strong>1</strong></td><td>0〜10点（比較的自立）</td></tr>
         </tbody>
       </table>
-      <p style="font-size:13px; margin-top:8px; color:var(--text-sub)">新設：経腸栄養管理加算 300点/日（7日限度）</p>
+      <p style="font-size:12px; margin-top:6px; color:var(--text-sub)">4項目（ベッド上可動性・移乗・食事・トイレ使用）× 0〜6点（0=自立、6=全介助）＝最大24点。<strong>高スコア＝より要介護</strong></p>
+      <p style="font-size:13px; margin-top:6px; color:var(--text-sub)">新設：経腸栄養管理加算 300点/日（7日限度）</p>
     `,
     trickyPoints: `
       <ul>
         <li><strong>中心静脈栄養の区分が変わった（令和6年改定）</strong>：対象疾患がある場合または開始30日以内→区分3、それ以外の長期継続→区分2</li>
-        <li>「疾患・状態」と「処置等」は<strong>別々に評価</strong>し、高い方を採用するのではなく組み合わせで30分類のいずれかに決まる</li>
-        <li>ADL区分は、別紙8「医療区分・ADL区分等に係る評価票」を用いて<strong>毎日</strong>評価・記録する</li>
-        <li>「喀痰吸引1日8回以上」は開始時間・回数の記録が算定根拠となる</li>
-        <li>「高密度治療を要する酸素療法（区分3）」と通常の酸素療法（区分2）の境界は施設で定義を統一すること</li>
+        <li>「疾患・状態」と「処置等」は<strong>別々に評価</strong>し、組み合わせで30分類のいずれかに決まる</li>
+        <li>ADL区分は別紙8を用いて<strong>毎日</strong>評価・記録する。<strong>スコアが高い＝より全介助</strong>（区分3=23〜24点、区分1=0〜10点）。当日含む過去3日間の平均的な状態で判定</li>
+        <li><strong>気管切開・挿管は発熱の有無で区分が変わる</strong>：38.0℃以上の発熱あり→区分3、発熱なし→区分2。人工呼吸器は発熱に関係なく区分3</li>
+        <li><strong>酸素療法（区分3）の基準</strong>：酸素非投与下で安静時・睡眠時・運動負荷のいずれかでSpO₂が90%以下となる状態。毎月末に該当状態か確認し診療録に記録が必要</li>
+        <li><strong>褥瘡（区分2）の条件</strong>：第2度以上（皮膚層の部分的喪失）または2か所以上に認められる場合。入院時既発生の褥瘡は治癒・軽快後も30日間は区分2として取り扱い可</li>
+        <li><strong>創傷・皮膚潰瘍・蜂巣炎等（区分2）の条件</strong>：1日2回以上のガーゼや創傷被覆材の交換が必要な場合に限る（褥瘡とは別項目）</li>
+        <li><strong>悪性腫瘍（区分2）の条件</strong>：WHO疼痛ラダー第2段階以上（弱オピオイド以上）の医療用麻薬等による疼痛コントロールが必要な場合に限る</li>
+        <li><strong>算定期間限定の処置（8日目以降は非該当）</strong>：24時間持続点滴・脱水＋発熱（各7日）、経腸栄養（発熱・嘔吐伴う）・せん妄（各7日）、頻回血糖検査・頻回嘔吐＋発熱（各3日）。状態悪化で再度該当すれば再算定可</li>
+        <li>「喀痰吸引1日8回以上」は夜間含め3時間に1回程度が目安。開始時間・回数の記録が算定根拠となる</li>
       </ul>
     `,
     noteTemplate: "疾患・状態 医療区分：　区分（主な根拠：　　　　）\n処置等 医療区分：　　区分（主な根拠：　　　　）\nADL区分：　　区分（スコア：　　）\n評価日：",
@@ -722,6 +686,78 @@ const ITEMS = [
     updatedAt: "2026-04-06（JSNP 2025年38版・CKD診療ガイド2024を反映）",
   },
 
+
+  // ============================================================
+  //  3. 死亡診断書 — 死因記載の要点
+  //  出典: 死亡診断書（死体検案書）記入マニュアル 令和8年度版（厚生労働省）
+  // ============================================================
+  {
+    id: "shindansho_shiin",
+    title: "死亡診断書 — 死因の書き方",
+    shortLabel: "I欄・II欄の記載ルール、老衰・持病がある場合の対応",
+    keywords: ["死亡診断書", "死体検案書", "死因", "I欄", "II欄", "老衰", "原死因", "誤嚥性肺炎", "心不全", "呼吸不全"],
+    summary: `
+      <p style="font-size:12px; color:var(--text-sub); margin-bottom:8px">出典：厚生労働省「死亡診断書記入マニュアル」令和8年度版（p9〜p22）</p>
+
+      <p style="font-weight:700; margin-bottom:4px">I欄の構造（最重要）</p>
+      <table class="detail-table">
+        <thead><tr><th style="width:4em">欄</th><th>記載内容</th></tr></thead>
+        <tbody>
+          <tr><td><strong>(ア)</strong></td><td>直接の死亡原因（一傷病名のみ）</td></tr>
+          <tr><td><strong>(イ)</strong></td><td>(ア)の原因</td></tr>
+          <tr><td><strong>(ウ)</strong></td><td>(イ)の原因</td></tr>
+          <tr><td><strong>(エ)</strong></td><td>(ウ)の原因・複数可（因果関係が分かるように）</td></tr>
+        </tbody>
+      </table>
+
+      <p style="font-weight:700; margin:10px 0 4px">II欄</p>
+      <p style="margin-bottom:8px">直接死因に<strong>関係しないが経過に影響した傷病</strong>（例：糖尿病、高血圧など既往）</p>
+
+      <p style="font-weight:700; margin-bottom:4px">療養型病院でよくあるパターン</p>
+      <table class="detail-table">
+        <thead><tr><th style="width:14em">状況</th><th>I欄の書き方</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>老衰のみ（他に病態なし）</td>
+            <td>(ア) 老衰</td>
+          </tr>
+          <tr>
+            <td>老衰から誤嚥性肺炎を併発</td>
+            <td>(ア) 誤嚥性肺炎<br>(イ) 老衰</td>
+          </tr>
+          <tr>
+            <td>脳卒中後→廃用→肺炎</td>
+            <td>(ア) 肺炎<br>(イ) 廃用症候群<br>(ウ) 脳梗塞（発症から○年）</td>
+          </tr>
+          <tr>
+            <td>悪性腫瘍（転移死）</td>
+            <td>(ア) 肝不全<br>(イ) 転移性肝癌<br>(ウ) 原発性 S状結腸癌</td>
+          </tr>
+          <tr>
+            <td>慢性腎臓病が背景</td>
+            <td>I欄が呼吸不全のみの場合、II欄に慢性腎臓病 → <strong>原死因</strong>は慢性腎臓病になる</td>
+          </tr>
+        </tbody>
+      </table>
+    `,
+    trickyPoints: `
+      <ul>
+        <li><strong>老衰は「他に死亡原因がない」ときのみ使用</strong>。老衰があっても誤嚥性肺炎などで亡くなった場合は、(ア)に肺炎、(イ)に老衰と記載する</li>
+        <li><strong>「心不全」「呼吸不全」は終末期状態としての単独記載不可</strong>（明確な病態としての心不全は可）。原因傷病をその上に記載するか、I欄に書けない場合はII欄に背景疾患を補う</li>
+        <li><strong>原死因 = I欄最下欄の傷病</strong>（その傷病が上欄すべてを引き起こせる場合）。I欄で決まらないときはII欄が原死因候補になる</li>
+        <li>傷病名は略語を避ける（AMI→急性心筋梗塞、SAH→くも膜下出血 など）</li>
+        <li>各傷病名に「発病から死亡までの期間」を記載する（例：2年、3か月）</li>
+        <li>「寝たきり」「ADL低下」は傷病名でないため記載不可</li>
+        <li>死亡時刻は<strong>死亡確認時刻ではなく死亡時刻</strong>を記入（救急搬送中のみ確認時刻可）</li>
+      </ul>
+    `,
+    noteTemplate: "I欄\n  (ア) 直接死因：                （期間：  ）\n  (イ) (ア)の原因：              （期間：  ）\n  (ウ) (イ)の原因：              （期間：  ）\nII欄（経過に影響した傷病）：\n死因の種類：1病死及び自然死\n備考：",
+    sourceTitle: "死亡診断書（死体検案書）記入マニュアル 令和8年度版（厚生労働省）",
+    sourceFile: "",
+    sourcePages: "p9〜p22（死亡の原因・参考①原死因の決め方）",
+    updatedAt: "2026-04-07（令和8年度版マニュアルを反映）",
+  },
+
 ]; // ITEMS 配列ここまで
 
 // ============================================================
@@ -730,9 +766,9 @@ const ITEMS = [
 
 function buildPdfLink(item) {
   if (item.sourceFile) {
-    // file:// の場合は target="_blank" だと iOS Safari でブロックされる場合があるため同タブで開く
-    const target = location.protocol === 'file:' ? '' : ' target="_blank" rel="noopener"';
-    return `<a class="pdf-btn" href="${item.sourceFile}"${target}>公式PDFを開く（${item.sourceTitle}）</a>`;
+    // window.open はユーザー操作起点のため iOS Safari (file://) でも新規タブで開ける
+    const url = item.sourceFile.replace(/'/g, '%27');
+    return `<button class="pdf-btn" type="button" onclick="window.open('${url}', '_blank', 'noopener')">公式PDFを開く（${item.sourceTitle}）</button>`;
   }
   return `<span class="pdf-btn pdf-btn-disabled">PDFファイル未設定（pdf/フォルダに配置後 sourceFile を更新）</span>`;
 }
@@ -808,86 +844,13 @@ document.getElementById("search").addEventListener("input", function () {
 });
 
 // ============================================================
-//  PWA: Service Worker 登録 + インストールバナー
+//  PWA: Service Worker 登録（サイレント）
 // ============================================================
 
 (function () {
-  // file:// で開いている場合はサーバー不要・サービスワーカー不要なのでスキップ
   if (location.protocol === 'file:') return;
-
-  // すでにホーム画面から起動している場合はバナー不要
-  const isStandalone =
-    window.matchMedia('(display-mode: standalone)').matches ||
-    window.navigator.standalone === true;
-  if (isStandalone || localStorage.getItem('install-dismissed')) return;
-
-  const banner   = document.getElementById('install-banner');
-  const swStatus = document.getElementById('sw-status');
-  const urlEl    = document.getElementById('ib-url');
-  const iosEl    = document.getElementById('ib-ios');
-  const androidEl= document.getElementById('ib-android');
-  const installBtn = document.getElementById('install-btn');
-
-  // バナーを表示
-  banner.hidden = false;
-
-  // アクセス中のURLを表示（スマホ側で入力する参考用）
-  urlEl.textContent = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
-
-  // OS判定
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  if (isIOS) {
-    iosEl.hidden = false;
-  } else {
-    androidEl.hidden = false;
-  }
-
-  // 閉じるボタン
-  document.getElementById('install-close').addEventListener('click', () => {
-    localStorage.setItem('install-dismissed', '1');
-    banner.hidden = true;
-  });
-
-  // Android Chrome: インストールプロンプトをキャッチ
-  let deferredPrompt = null;
-  window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
-    deferredPrompt = e;
-    installBtn.hidden = false;
-    androidEl.hidden = true; // 手動手順は不要になるので隠す
-  });
-  installBtn.addEventListener('click', async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    if (outcome === 'accepted') {
-      localStorage.setItem('install-dismissed', '1');
-      banner.hidden = true;
-    }
-  });
-
-  // Service Worker 登録
-  if (!('serviceWorker' in navigator)) {
-    swStatus.textContent = '⚠️ このブラウザはオフライン機能に対応していません';
-    return;
-  }
-
-  // まず現在のコントローラーを確認（再読み込み時など SW がすでに動いている場合）
-  if (navigator.serviceWorker.controller) {
-    swStatus.textContent = '✅ オフライン利用可能（PDFも含む）';
-  }
-
-  // SW を登録し、ready（active 状態になった時点）で確定表示
-  // navigator.serviceWorker.ready は SW が activated になると必ず resolve する
-  navigator.serviceWorker.register('./sw.js')
-    .then(() => navigator.serviceWorker.ready)
-    .then(() => {
-      swStatus.textContent = '✅ オフライン利用可能（PDFも含む）';
-    })
-    .catch(() => {
-      swStatus.textContent = '⚠️ オフライン機能の設定に失敗（HTTP経由でのアクセスが必要です）';
-    });
+  if (!('serviceWorker' in navigator)) return;
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
 }());
 </script>
 </body>
