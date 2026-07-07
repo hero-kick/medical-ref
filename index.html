@@ -30,8 +30,9 @@
       --radius: 10px;
       --shadow: 0 1px 4px rgba(0,0,0,0.08);
     }
+    /* OS設定がダークかつ手動でライト指定していない場合 */
     @media (prefers-color-scheme: dark) {
-      :root {
+      :root:not([data-theme="light"]) {
         --bg: #121212;
         --surface: #1e1e1e;
         --border: #333;
@@ -44,6 +45,20 @@
         --tag-bg: #2a2a2a;
         --shadow: 0 1px 4px rgba(0,0,0,0.4);
       }
+    }
+    /* 手動でダーク指定した場合（OS設定に関わらず適用） */
+    :root[data-theme="dark"] {
+      --bg: #121212;
+      --surface: #1e1e1e;
+      --border: #333;
+      --text: #e8e8e8;
+      --text-sub: #aaa;
+      --accent: #5aabdb;
+      --accent-bg: #1a2f3d;
+      --warn: #f0c060;
+      --warn-bg: #2a1e00;
+      --tag-bg: #2a2a2a;
+      --shadow: 0 1px 4px rgba(0,0,0,0.4);
     }
 
     body {
@@ -67,11 +82,17 @@
       z-index: 10;
       box-shadow: var(--shadow);
     }
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
     header h1 {
       font-size: 18px;
       font-weight: 700;
       letter-spacing: 0.02em;
-      margin-bottom: 10px;
     }
     header h1 span {
       font-size: 12px;
@@ -79,9 +100,22 @@
       color: var(--text-sub);
       margin-left: 8px;
     }
+    #theme-toggle {
+      flex-shrink: 0;
+      width: 36px;
+      height: 32px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .search-row { position: relative; }
     #search {
       width: 100%;
-      padding: 10px 14px;
+      padding: 10px 38px 10px 14px;
       font-size: 16px; /* 16px以上でiOSズームを防ぐ */
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -91,6 +125,68 @@
       appearance: none;
     }
     #search:focus { border-color: var(--accent); }
+    #search::-webkit-search-cancel-button { display: none; }
+    #search-clear {
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: none;
+      color: var(--text-sub);
+      font-size: 16px;
+      padding: 8px 10px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    /* カテゴリチップ */
+    #cat-chips {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    #cat-chips::-webkit-scrollbar { display: none; }
+    .chip {
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text-sub);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .chip.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    /* ツールバー（件数・一括開閉） */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+    #hit-count { font-size: 12px; color: var(--text-sub); }
+    #toggle-all {
+      border: none;
+      background: none;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      font-family: inherit;
+      padding: 2px 4px;
+      cursor: pointer;
+    }
 
     /* ===== 項目カード ===== */
     #item-list {
@@ -291,13 +387,72 @@
       color: var(--text-sub);
       font-size: 15px;
     }
+
+    /* ピン留め */
+    .pin-btn {
+      flex-shrink: 0;
+      border: none;
+      background: none;
+      font-size: 18px;
+      line-height: 1;
+      color: var(--border);
+      padding: 4px 6px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .item-card.pinned { border-color: var(--accent); }
+    .item-card.pinned .pin-btn { color: var(--accent); }
+
+    /* メモコピー */
+    .copy-btn {
+      float: right;
+      border: 1px solid var(--accent);
+      background: none;
+      color: var(--accent);
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: inherit;
+      padding: 2px 10px;
+      cursor: pointer;
+    }
+    .copy-btn:disabled { opacity: 0.7; cursor: default; }
+
+    /* 先頭へ戻る */
+    #back-to-top {
+      position: fixed;
+      right: 16px;
+      bottom: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--accent);
+      font-size: 20px;
+      line-height: 1;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      z-index: 20;
+    }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>医療参照ツール <span>療養型病院 日常確認用</span></h1>
-  <input type="search" id="search" placeholder="キーワードで検索..." autocomplete="off">
+  <div class="header-top">
+    <h1>医療参照ツール <span>療養型病院 日常確認用</span></h1>
+    <button id="theme-toggle" type="button" aria-label="ダーク/ライト切替">🌙</button>
+  </div>
+  <div class="search-row">
+    <input type="search" id="search" placeholder="キーワードで検索（スペース区切りでAND）" autocomplete="off">
+    <button id="search-clear" type="button" aria-label="検索をクリア" hidden>✕</button>
+  </div>
+  <div id="cat-chips" role="group" aria-label="カテゴリで絞り込み"></div>
+  <div class="toolbar">
+    <span id="hit-count"></span>
+    <button id="toggle-all" type="button">すべて開く</button>
+  </div>
 </header>
 
 
@@ -307,6 +462,8 @@
 
 <div id="item-list"></div>
 <p id="empty-msg" hidden>該当する項目がありません</p>
+
+<button id="back-to-top" type="button" aria-label="先頭へ戻る" hidden>↑</button>
 
 <script>
 // ============================================================
@@ -320,6 +477,7 @@
   {
     id: "unique_id",              // 重複しない英数字ID
     title: "項目名",
+    category: "制度・区分",         // 絞り込みチップに使うカテゴリ（既存: 制度・区分 / 薬剤 / 書類 / 身体所見）
     shortLabel: "一言説明",
     keywords: ["検索", "キーワード"],   // 検索に使うタグ
     summary: `
@@ -348,6 +506,7 @@ const ITEMS = [
   {
     id: "iryo_kubun",
     title: "医療区分",
+    category: "制度・区分",
     shortLabel: "療養病棟の入院基本料算定区分（令和6年改定・30分類）",
     keywords: ["医療区分", "療養病棟", "入院基本料", "ADL区分", "令和6年", "中心静脈栄養", "経腸栄養"],
     summary: `
@@ -457,6 +616,7 @@ const ITEMS = [
   {
     id: "shougai_jiritsu",
     title: "障害高齢者の日常生活自立度",
+    category: "制度・区分",
     shortLabel: "寝たきり度の判定（ランクJ〜C2）",
     keywords: ["日常生活自立度", "寝たきり度", "ランクJ", "ランクA", "ランクB", "ランクC", "ADL"],
     summary: `
@@ -501,6 +661,7 @@ const ITEMS = [
   {
     id: "ninchisho_jiritsu",
     title: "認知症高齢者の日常生活自立度",
+    category: "制度・区分",
     shortLabel: "認知症の生活自立度判定（ランクⅠ〜M）",
     keywords: ["認知症", "日常生活自立度", "ランクI", "ランクII", "ランクIII", "ランクIV", "ランクM", "BPSD", "徘徊", "失禁"],
     summary: `
@@ -544,6 +705,7 @@ const ITEMS = [
   {
     id: "koureisha_yakuzai",
     title: "高齢者で見直しやすい薬",
+    category: "薬剤",
     shortLabel: "PIMs（潜在的に不適切な薬物）と減薬の考え方 ─ 2025年版",
     keywords: ["PIM", "ポリファーマシー", "減薬", "ベンゾジアゼピン", "抗コリン", "NSAIDs", "スルホニル尿素", "老年医学", "GLP1", "ワルファリン"],
     summary: `
@@ -594,6 +756,7 @@ const ITEMS = [
   {
     id: "jinkino_yakuzai",
     title: "腎機能別の注意薬",
+    category: "薬剤",
     shortLabel: "eGFR・Ccr別の用量調整・禁忌（JSNP 2025年38版）",
     keywords: ["腎機能", "eGFR", "Ccr", "CKD", "クレアチニン", "腎排泄", "用量調整", "禁忌", "DOAC", "メトホルミン", "プレガバリン", "ファモチジン"],
     summary: `
@@ -694,6 +857,7 @@ const ITEMS = [
   {
     id: "shindansho_shiin",
     title: "死亡診断書 — 死因の書き方",
+    category: "書類",
     shortLabel: "I欄・II欄の記載ルール、老衰・持病がある場合の対応",
     keywords: ["死亡診断書", "死体検案書", "死因", "I欄", "II欄", "老衰", "原死因", "誤嚥性肺炎", "心不全", "呼吸不全"],
     summary: `
@@ -758,6 +922,204 @@ const ITEMS = [
     updatedAt: "2026-04-07（令和8年度版マニュアルを反映）",
   },
 
+
+  // ============================================================
+  //  4. 肺音聴診と病態
+  //  出典: 日本呼吸器学会「呼吸音（肺音）の分類および用語」など
+  // ============================================================
+  {
+    id: "haion_choushin",
+    title: "肺音聴診と病態",
+    category: "身体所見",
+    shortLabel: "副雑音の種類とタイミング、そこから疑う疾患",
+    keywords: ["肺音", "呼吸音", "聴診", "副雑音", "ラ音", "wheeze", "crackle", "捻髪音", "水泡音", "笛音", "いびき音", "rhonchi", "stridor", "心不全", "肺炎", "間質性肺炎", "COPD", "喘息", "胸水", "気胸"],
+    summary: `
+      <p style="font-weight:700; margin-bottom:4px">① 呼吸サイクルでの聴こえるタイミング</p>
+      <svg viewBox="0 0 440 175" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="副雑音のタイミング図" style="width:100%; max-width:480px; height:auto; display:block; margin:4px 0 2px">
+        <text x="240" y="14" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor">吸気</text>
+        <text x="370" y="14" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor">呼気</text>
+        <line x1="175" y1="20" x2="175" y2="165" stroke="currentColor" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+        <line x1="305" y1="20" x2="305" y2="165" stroke="currentColor" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+        <line x1="435" y1="20" x2="435" y2="165" stroke="currentColor" stroke-width="1" stroke-dasharray="3,3" opacity="0.3"/>
+
+        <text x="170" y="40" text-anchor="end" font-size="11" fill="currentColor">捻髪音 fine</text>
+        <rect x="265" y="30" width="40" height="14" fill="#5aabdb" rx="2"/>
+
+        <text x="170" y="62" text-anchor="end" font-size="11" fill="currentColor">水泡音 coarse</text>
+        <rect x="180" y="52" width="180" height="14" fill="#7fb685" rx="2"/>
+
+        <text x="170" y="84" text-anchor="end" font-size="11" fill="currentColor">笛音 wheeze</text>
+        <rect x="310" y="74" width="115" height="14" fill="#d97a7a" rx="2"/>
+
+        <text x="170" y="106" text-anchor="end" font-size="11" fill="currentColor">いびき rhonchi</text>
+        <rect x="310" y="96" width="115" height="14" fill="#c89060" rx="2"/>
+
+        <text x="170" y="128" text-anchor="end" font-size="11" fill="currentColor">stridor</text>
+        <rect x="180" y="118" width="125" height="14" fill="#b066c4" rx="2"/>
+
+        <text x="170" y="150" text-anchor="end" font-size="11" fill="currentColor">胸膜摩擦音</text>
+        <rect x="180" y="140" width="245" height="14" fill="#888888" rx="2"/>
+      </svg>
+      <p style="font-size:11px; color:var(--text-sub); margin-bottom:8px">バーの位置＝聴こえる時相。<strong>吸気優位</strong>＝stridor / fine、<strong>呼気優位</strong>＝wheeze / rhonchi。</p>
+
+      <p style="font-weight:700; margin:10px 0 4px">② 副雑音まとめ</p>
+      <table class="detail-table">
+        <thead><tr><th>名称</th><th>音の特徴</th><th>主な疾患</th></tr></thead>
+        <tbody>
+          <tr><td><strong>捻髪音</strong><br><span style="font-size:11px; color:var(--text-sub)">fine crackle</span></td><td>細かい高音「パチパチ」Velcro 様<br><strong>吸気後期</strong></td><td>間質性肺炎、肺線維症、心不全初期</td></tr>
+          <tr><td><strong>水泡音</strong><br><span style="font-size:11px; color:var(--text-sub)">coarse crackle</span></td><td>粗い低音「ブツブツ」<br>吸気〜呼気</td><td>肺炎、肺水腫、気管支拡張症、誤嚥性肺炎</td></tr>
+          <tr><td><strong>笛音</strong><br><span style="font-size:11px; color:var(--text-sub)">wheeze</span></td><td>高音「ヒュー」<br>呼気優位</td><td>気管支喘息、COPD増悪</td></tr>
+          <tr><td><strong>いびき音</strong><br><span style="font-size:11px; color:var(--text-sub)">rhonchi</span></td><td>低音「グー」<br>呼気優位</td><td>痰貯留、COPD、慢性気管支炎</td></tr>
+          <tr><td><strong>stridor</strong></td><td>高音・<u>頸部で最強</u><br><strong>吸気優位</strong></td><td><span style="color:var(--warn)">上気道狭窄（緊急）</span></td></tr>
+          <tr><td>胸膜摩擦音</td><td>「ギュッギュッ」革擦り様<br>吸+呼両方</td><td>胸膜炎、肺塞栓</td></tr>
+        </tbody>
+      </table>
+
+      <p style="font-weight:700; margin:12px 0 4px">③ 疾患別の所見部位（背面シェーマ）</p>
+      <svg viewBox="0 0 440 130" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="疾患別の典型的な所見部位" style="width:100%; max-width:480px; height:auto; display:block; margin:4px 0 2px">
+        <!-- 心不全：両側下対称 -->
+        <g transform="translate(15,0)">
+          <text x="42" y="13" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">心不全</text>
+          <ellipse cx="28" cy="58" rx="13" ry="30" fill="none" stroke="currentColor" stroke-width="1.3"/>
+          <ellipse cx="56" cy="58" rx="13" ry="30" fill="none" stroke="currentColor" stroke-width="1.3"/>
+          <ellipse cx="28" cy="78" rx="11" ry="10" fill="#d97a7a" fill-opacity="0.6"/>
+          <ellipse cx="56" cy="78" rx="11" ry="10" fill="#d97a7a" fill-opacity="0.6"/>
+          <text x="42" y="108" text-anchor="middle" font-size="10" fill="currentColor">両側下対称</text>
+          <text x="42" y="121" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.75">fine→coarse</text>
+        </g>
+        <!-- 誤嚥性肺炎：右下背 -->
+        <g transform="translate(125,0)">
+          <text x="42" y="13" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">誤嚥性肺炎</text>
+          <ellipse cx="28" cy="58" rx="13" ry="30" fill="none" stroke="currentColor" stroke-width="1.3"/>
+          <ellipse cx="56" cy="58" rx="13" ry="30" fill="none" stroke="currentColor" stroke-width="1.3"/>
+          <ellipse cx="28" cy="78" rx="10" ry="9" fill="#d97a7a" fill-opacity="0.6"/>
+          <text x="42" y="108" text-anchor="middle" font-size="10" fill="currentColor">右下背側</text>
+          <text x="42" y="121" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.75">coarse</text>
+        </g>
+        <!-- 間質性肺炎：両側下背 -->
+        <g transform="translate(235,0)">
+          <text x="42" y="13" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">間質性肺炎</text>
+          <ellipse cx="28" cy="58" rx="13" ry="30" fill="none" stroke="currentColor" stroke-width="1.3"/>
+          <ellipse cx="56" cy="58" rx="13" ry="30" fill="none" stroke="currentColor" stroke-width="1.3"/>
+          <ellipse cx="28" cy="80" rx="10" ry="7" fill="#d97a7a" fill-opacity="0.6"/>
+          <ellipse cx="56" cy="80" rx="10" ry="7" fill="#d97a7a" fill-opacity="0.6"/>
+          <text x="42" y="108" text-anchor="middle" font-size="10" fill="currentColor">両側下背側</text>
+          <text x="42" y="121" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.75">fine（Velcro）</text>
+        </g>
+        <!-- 肺炎：局在 -->
+        <g transform="translate(345,0)">
+          <text x="42" y="13" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">肺炎（局在）</text>
+          <ellipse cx="28" cy="58" rx="13" ry="30" fill="none" stroke="currentColor" stroke-width="1.3"/>
+          <ellipse cx="56" cy="58" rx="13" ry="30" fill="none" stroke="currentColor" stroke-width="1.3"/>
+          <ellipse cx="56" cy="55" rx="8" ry="9" fill="#d97a7a" fill-opacity="0.6"/>
+          <text x="42" y="108" text-anchor="middle" font-size="10" fill="currentColor">罹患葉に一致</text>
+          <text x="42" y="121" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.75">coarse＋気管支音化</text>
+        </g>
+      </svg>
+      <p style="font-size:11px; color:var(--text-sub); margin-bottom:8px">背面から見たシェーマ（向かって左＝患者右）。色塗り＝副雑音が聴こえやすい部位。</p>
+
+      <p style="font-weight:700; margin:10px 0 4px">④ その他の疾患 → 所見</p>
+      <table class="detail-table">
+        <tbody>
+          <tr><td><strong>気管支喘息</strong></td><td>呼気延長＋wheeze。<span style="color:var(--warn)">silent chest＝重症化サイン</span></td></tr>
+          <tr><td><strong>COPD</strong></td><td>呼吸音減弱＋呼気延長。増悪で wheeze / rhonchi</td></tr>
+          <tr><td><strong>胸水</strong></td><td>呼吸音消失＋打診<strong>濁音</strong>＋声音振盪低下</td></tr>
+          <tr><td><strong>気胸</strong></td><td>呼吸音消失＋打診<strong>鼓音</strong>＋声音振盪低下</td></tr>
+          <tr><td><strong>無気肺</strong></td><td>呼吸音減弱 or 気管支呼吸音化（局所）</td></tr>
+          <tr><td><strong>上気道閉塞</strong></td><td><strong>stridor</strong>（吸気）、頸部で最強</td></tr>
+        </tbody>
+      </table>
+    `,
+    trickyPoints: `
+      <ul>
+        <li><strong>吸気か呼気かでまず大別</strong>：吸気優位＝<u>fine crackle / stridor</u>、呼気優位＝<u>wheeze / rhonchi</u></li>
+        <li><strong>fine と coarse の聞き分け</strong>：細かい高音で吸気後期＝fine（間質性、心不全初期）／粗い低音で吸気〜呼気＝coarse（分泌物、肺炎、肺水腫）</li>
+        <li><strong>wheeze と stridor の取り違え注意</strong>：吸気優位＆頸部で最強なら stridor＝<span style="color:var(--warn)">上気道狭窄（緊急）</span></li>
+        <li><strong>心不全 vs 肺炎の crackle 鑑別</strong>：心不全＝<strong>両側対称・下肺野から</strong>、肺炎＝<strong>局在性</strong></li>
+        <li><strong>silent chest は喘息の重症化サイン</strong>：wheeze が消えて呼吸音も弱い＝換気不全</li>
+        <li><strong>胸水 vs 気胸は打診で決める</strong>：呼吸音消失は共通、<u>濁音＝胸水</u>、<u>鼓音＝気胸</u></li>
+        <li><strong>末梢で気管支呼吸音が聴こえたら consolidation</strong>：含気消失で音が伝わりやすくなっている（肺炎・無気肺周囲）</li>
+        <li><strong>誤嚥性肺炎は右下肺野背側に多い</strong>：右主気管支が太く垂直に近いため</li>
+      </ul>
+    `,
+    noteTemplate: "聴取日時：\n体位：座位 / 仰臥位\n呼吸音（部位別、↓減弱・→気管支呼吸音化）\n  前 右上・右下・左上・左下：\n  背 右上・右下・左上・左下：\n副雑音（種類 / 部位 / タイミング）：\n呼気延長：有 / 無\nSpO2（室内気）：　　%   RR：　　/分   体温：　　℃\n疑う病態：\n対応（吸引・薬剤・X線/採血指示など）：",
+    sourceTitle: "日本呼吸器学会 呼吸音（肺音）の分類および用語",
+    sourceFile: "",
+    sourcePages: "学会指針（参考）",
+    updatedAt: "2026-05-14（初版）",
+  },
+
+
+  // ============================================================
+  //  5. 意識レベル（JCS / GCS）
+  //  出典: 標準的評価スケール（JCS 3-3-9度方式 / Glasgow Coma Scale）
+  // ============================================================
+  {
+    id: "ishiki_level",
+    title: "意識レベル（JCS / GCS）",
+    category: "身体所見",
+    shortLabel: "JCS 3-3-9度方式と GCS（E・V・M）の付け方",
+    keywords: ["意識レベル", "意識障害", "JCS", "GCS", "3-3-9", "ジャパンコーマスケール", "グラスゴーコーマスケール", "開眼", "覚醒", "痛み刺激", "傾眠", "昏睡", "せん妄", "不穏", "瞳孔", "対光反射"],
+    summary: `
+      <p style="font-weight:700; margin-bottom:4px">① JCS（Japan Coma Scale・3-3-9度方式）</p>
+      <p style="font-size:13px; margin-bottom:4px">まず覚醒の有無で大分類：<strong>刺激なしで覚醒＝I</strong> ／ <strong>刺激で覚醒＝II</strong> ／ <strong>刺激でも覚醒せず＝III</strong>。その後に細分する。</p>
+      <table class="detail-table">
+        <thead><tr><th>大分類</th><th>点数</th><th>状態</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="3"><strong>I</strong><br>刺激しないでも<br>覚醒している</td><td><strong>1</strong></td><td>だいたい清明だが、今ひとつはっきりしない</td></tr>
+          <tr><td><strong>2</strong></td><td>見当識障害あり（時・場所・人が分からない）</td></tr>
+          <tr><td><strong>3</strong></td><td>自分の名前・生年月日が言えない</td></tr>
+          <tr><td rowspan="3"><strong>II</strong><br>刺激すると覚醒<br>（やめると眠り込む）</td><td><strong>10</strong></td><td>普通の呼びかけで容易に開眼する</td></tr>
+          <tr><td><strong>20</strong></td><td>大きな声または体を揺さぶることで開眼する</td></tr>
+          <tr><td><strong>30</strong></td><td>痛み刺激＋呼びかけの反復でかろうじて開眼する</td></tr>
+          <tr><td rowspan="3"><strong>III</strong><br>刺激しても<br>覚醒しない</td><td><strong>100</strong></td><td>痛み刺激に対し払いのける動作をする</td></tr>
+          <tr><td><strong>200</strong></td><td>痛み刺激で少し手足を動かす・顔をしかめる</td></tr>
+          <tr><td><strong>300</strong></td><td>痛み刺激に反応しない</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px; color:var(--text-sub); margin-top:4px">付加記号：<strong>R</strong>＝不穏、<strong>I</strong>＝糞便失禁、<strong>A</strong>＝自発性喪失。記載例：JCS 30R、JCS 3-I</p>
+
+      <p style="font-weight:700; margin:12px 0 4px">② GCS（Glasgow Coma Scale）— E＋V＋M の合計 3〜15点</p>
+      <table class="detail-table">
+        <thead><tr><th>項目</th><th>点</th><th>反応</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="4"><strong>E</strong> 開眼<br><span style="font-size:11px; color:var(--text-sub)">eye opening</span></td><td>4</td><td>自発的に開眼</td></tr>
+          <tr><td>3</td><td>呼びかけにより開眼</td></tr>
+          <tr><td>2</td><td>痛み刺激により開眼</td></tr>
+          <tr><td>1</td><td>開眼しない</td></tr>
+          <tr><td rowspan="5"><strong>V</strong> 言語<br><span style="font-size:11px; color:var(--text-sub)">verbal response</span></td><td>5</td><td>見当識あり（正常な会話）</td></tr>
+          <tr><td>4</td><td>会話混乱（見当識障害）</td></tr>
+          <tr><td>3</td><td>不適当な単語のみ</td></tr>
+          <tr><td>2</td><td>意味不明の発声のみ</td></tr>
+          <tr><td>1</td><td>発語なし（挿管中は <strong>T</strong> と記載）</td></tr>
+          <tr><td rowspan="6"><strong>M</strong> 運動<br><span style="font-size:11px; color:var(--text-sub)">motor response</span></td><td>6</td><td>命令に従う</td></tr>
+          <tr><td>5</td><td>痛み刺激の部位に手を持っていく（払いのける）</td></tr>
+          <tr><td>4</td><td>痛みから逃避する（引っ込める）</td></tr>
+          <tr><td>3</td><td>異常屈曲（除皮質硬直）</td></tr>
+          <tr><td>2</td><td>異常伸展（除脳硬直）</td></tr>
+          <tr><td>1</td><td>まったく動かない</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px; color:var(--text-sub); margin-top:4px">記載例：GCS 14（E4V4M6）。合計点だけでなく E・V・M の内訳も必ず残す。</p>
+    `,
+    trickyPoints: `
+      <ul>
+        <li><strong>JCS は「覚醒しているか」だけで大分類</strong>：開眼していても、呼びかけをやめると眠り込むなら II 桁</li>
+        <li><strong>意識清明は「JCS 0」「GCS 15」</strong>：清明なら 0 と記載する（I-1 ではない）</li>
+        <li><strong>重症の目安</strong>：<span style="color:var(--warn)">GCS 8点以下・JCS 30以上（II-30〜）は重症意識障害</span>＝気道確保を検討するライン</li>
+        <li><strong>認知症・失語では V を単独で評価しない</strong>：普段のベースラインとの比較で判断し、記録にベースラインも残す</li>
+        <li><strong>「眠っているだけ」との区別</strong>：呼びかけで速やかに完全覚醒し、覚醒が維持されるなら意識障害ではない</li>
+        <li><strong>急な意識レベル低下は、まずバイタル＋血糖</strong>：低血糖・低酸素・ショック・薬剤性（ベンゾ・オピオイド等）を先に除外する</li>
+        <li><strong>点数そのものより経時変化が重要</strong>：「JCS 3 → 20 に低下」のような推移で報告する</li>
+      </ul>
+    `,
+    noteTemplate: "評価日時：\nJCS：　　（付加記号 R/I/A、例 JCS 20、JCS 30R）\nGCS：E　 V　 M　 ＝合計　　点（挿管中は VT）\n普段のベースライン：\n瞳孔径：右　mm / 左　mm　　対光反射：右　/ 左\nバイタル：BP　/　　HR　　SpO2　％　RR　/分　BT　　℃　血糖　　mg/dL\n変化の契機（薬剤変更・発熱・転倒など）：\n対応・報告先：",
+    sourceTitle: "標準的評価スケール（JCS 3-3-9度方式 / Glasgow Coma Scale）",
+    sourceFile: "",
+    sourcePages: "—",
+    updatedAt: "2026-07-07（初版）",
+  },
+
 ]; // ITEMS 配列ここまで
 
 // ============================================================
@@ -773,11 +1135,93 @@ function buildPdfLink(item) {
   return `<span class="pdf-btn pdf-btn-disabled">PDFファイル未設定（pdf/フォルダに配置後 sourceFile を更新）</span>`;
 }
 
+// ============================================================
+//  永続化ヘルパー（file:// 等で localStorage が使えなくても動作継続）
+// ============================================================
+function storeGet(key) {
+  try { return localStorage.getItem(key); } catch (e) { return null; }
+}
+function storeSet(key, value) {
+  try { localStorage.setItem(key, value); } catch (e) {}
+}
+
+// ============================================================
+//  ピン留め（よく使う項目を先頭に固定）
+// ============================================================
+let pins = [];
+try { pins = JSON.parse(storeGet("medref-pins")) || []; } catch (e) { pins = []; }
+
+function togglePin(id) {
+  const i = pins.indexOf(id);
+  if (i >= 0) pins.splice(i, 1); else pins.push(id);
+  storeSet("medref-pins", JSON.stringify(pins));
+  applyPinOrder();
+}
+
+const itemOrder = {};
+ITEMS.forEach((item, i) => { itemOrder[item.id] = i; });
+
+function applyPinOrder() {
+  const cards = Array.from(listEl.children);
+  cards.sort((a, b) => {
+    const pa = pins.includes(a.dataset.id) ? 0 : 1;
+    const pb = pins.includes(b.dataset.id) ? 0 : 1;
+    if (pa !== pb) return pa - pb;
+    return itemOrder[a.dataset.id] - itemOrder[b.dataset.id];
+  });
+  cards.forEach(card => {
+    const pinned = pins.includes(card.dataset.id);
+    card.classList.toggle("pinned", pinned);
+    card.querySelector(".pin-btn").setAttribute("aria-pressed", pinned ? "true" : "false");
+    listEl.appendChild(card);
+  });
+}
+
+// ============================================================
+//  記載メモのコピー（非セキュアコンテキスト用フォールバック付き）
+// ============================================================
+function fallbackCopy(text) {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  let ok = false;
+  try { ok = document.execCommand("copy"); } catch (e) {}
+  document.body.removeChild(ta);
+  return ok;
+}
+
+function copyText(text, btn) {
+  const done = ok => {
+    btn.textContent = ok ? "コピーしました" : "コピー失敗";
+    btn.disabled = true;
+    setTimeout(() => { btn.textContent = "コピー"; btn.disabled = false; }, 1500);
+  };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(() => done(true), () => done(fallbackCopy(text)));
+  } else {
+    done(fallbackCopy(text));
+  }
+}
+
 function renderItem(item) {
   const card = document.createElement("div");
   card.className = "item-card";
   card.dataset.id = item.id;
-  card.dataset.search = [item.title, ...(item.keywords || [])].join(" ").toLowerCase();
+  card.dataset.category = item.category || "";
+  // 検索対象: タイトル・サブタイトル・キーワードに加え、本文（HTMLタグ除去）とメモも含める
+  const tmp = document.createElement("div");
+  tmp.innerHTML = (item.summary || "") + (item.trickyPoints || "");
+  card.dataset.search = [
+    item.title,
+    item.shortLabel,
+    ...(item.keywords || []),
+    tmp.textContent,
+    item.noteTemplate,
+    item.sourceTitle,
+  ].join(" ").toLowerCase().replace(/\s+/g, " ");
 
   card.innerHTML = `
     <details>
@@ -787,6 +1231,7 @@ function renderItem(item) {
           <span class="summary-title">${item.title}</span>
           <span class="summary-label">${item.shortLabel}</span>
         </span>
+        <button class="pin-btn" type="button" aria-label="よく使う項目として先頭に固定" aria-pressed="false">★</button>
       </summary>
       <div class="detail-body">
 
@@ -800,7 +1245,7 @@ function renderItem(item) {
         </div>
 
         <div class="section">
-          <p class="section-title">記載メモ（テンプレート）</p>
+          <p class="section-title">記載メモ（テンプレート）<button class="copy-btn" type="button">コピー</button></p>
           <pre style="font-size:13px; white-space:pre-wrap; color:var(--text-sub); background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:10px;">${item.noteTemplate}</pre>
         </div>
 
@@ -820,27 +1265,127 @@ function renderItem(item) {
       </div>
     </details>
   `;
+
+  // ピン留め（summary 内のボタンなので、details の開閉に伝播させない）
+  card.querySelector(".pin-btn").addEventListener("click", e => {
+    e.preventDefault();
+    e.stopPropagation();
+    togglePin(item.id);
+  });
+
+  // 記載メモのコピー
+  card.querySelector(".copy-btn").addEventListener("click", e => {
+    copyText(item.noteTemplate, e.currentTarget);
+  });
+
   return card;
 }
 
 const listEl = document.getElementById("item-list");
 const emptyEl = document.getElementById("empty-msg");
 
-// 全項目を一度描画
+// 全項目を一度描画し、ピン留め順を反映
 ITEMS.forEach(item => listEl.appendChild(renderItem(item)));
+applyPinOrder();
 
 // ============================================================
-//  検索
+//  検索（スペース区切り AND）＋ カテゴリ絞り込み
 // ============================================================
-document.getElementById("search").addEventListener("input", function () {
-  const q = this.value.trim().toLowerCase();
+const searchEl = document.getElementById("search");
+const searchClearEl = document.getElementById("search-clear");
+const hitCountEl = document.getElementById("hit-count");
+let activeCategory = "";
+
+function applyFilter() {
+  const terms = searchEl.value.trim().toLowerCase().split(/[\s　]+/).filter(Boolean);
   let visible = 0;
   document.querySelectorAll(".item-card").forEach(card => {
-    const hit = !q || card.dataset.search.includes(q);
+    const inCategory = !activeCategory || card.dataset.category === activeCategory;
+    const hit = inCategory && terms.every(t => card.dataset.search.includes(t));
     card.hidden = !hit;
     if (hit) visible++;
   });
   emptyEl.hidden = visible > 0;
+  hitCountEl.textContent = `${visible}件`;
+  searchClearEl.hidden = !searchEl.value;
+}
+
+searchEl.addEventListener("input", applyFilter);
+searchClearEl.addEventListener("click", () => {
+  searchEl.value = "";
+  applyFilter();
+  searchEl.focus();
+});
+
+// カテゴリチップを ITEMS から動的生成
+const chipsEl = document.getElementById("cat-chips");
+const categories = [];
+ITEMS.forEach(item => {
+  if (item.category && !categories.includes(item.category)) categories.push(item.category);
+});
+["", ...categories].forEach(cat => {
+  const chip = document.createElement("button");
+  chip.type = "button";
+  chip.className = "chip" + (cat === "" ? " active" : "");
+  chip.textContent = cat === "" ? "すべて" : cat;
+  chip.addEventListener("click", () => {
+    activeCategory = cat;
+    chipsEl.querySelectorAll(".chip").forEach(c => c.classList.toggle("active", c === chip));
+    applyFilter();
+  });
+  chipsEl.appendChild(chip);
+});
+
+applyFilter();
+
+// ============================================================
+//  すべて開く / 閉じる（表示中のカードのみ対象）
+// ============================================================
+const toggleAllEl = document.getElementById("toggle-all");
+toggleAllEl.addEventListener("click", () => {
+  const detailsList = Array.from(document.querySelectorAll(".item-card:not([hidden]) details"));
+  const shouldOpen = detailsList.some(d => !d.open);
+  detailsList.forEach(d => { d.open = shouldOpen; });
+  toggleAllEl.textContent = shouldOpen ? "すべて閉じる" : "すべて開く";
+});
+
+// ============================================================
+//  先頭へ戻るボタン
+// ============================================================
+const backToTopEl = document.getElementById("back-to-top");
+window.addEventListener("scroll", () => {
+  backToTopEl.hidden = window.scrollY < 400;
+}, { passive: true });
+backToTopEl.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+// ============================================================
+//  テーマ切替（未設定時は OS 設定に追従、手動切替を localStorage に保存）
+// ============================================================
+const themeToggleEl = document.getElementById("theme-toggle");
+
+function reflectThemeButton() {
+  const dark = document.documentElement.dataset.theme === "dark" ||
+    (!document.documentElement.dataset.theme &&
+      window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  themeToggleEl.textContent = dark ? "☀️" : "🌙";
+}
+
+const savedTheme = storeGet("medref-theme");
+if (savedTheme === "light" || savedTheme === "dark") {
+  document.documentElement.dataset.theme = savedTheme;
+}
+reflectThemeButton();
+
+themeToggleEl.addEventListener("click", () => {
+  const nowDark = document.documentElement.dataset.theme === "dark" ||
+    (!document.documentElement.dataset.theme &&
+      window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const next = nowDark ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  storeSet("medref-theme", next);
+  reflectThemeButton();
 });
 
 // ============================================================
