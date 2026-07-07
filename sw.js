@@ -6,14 +6,14 @@
 //  例: 'medical-v1' → 'medical-v2'
 // ============================================================
 
-const CACHE_VERSION = 'medical-v8';
+const CACHE_VERSION = 'medical-v9';
 
 const FILES_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
   './icon.svg',
-  './pdf/iryo_kubun_hyoka.pdf',
+  './pdf/iryo_kubun_bessi8_r8.pdf',
   './pdf/shougai_jiritsu.pdf',
   './pdf/ninchisho_jiritsu.pdf',
   './pdf/jsnp_yakuzai_38.pdf',
