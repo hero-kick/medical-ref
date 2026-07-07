@@ -6,7 +6,7 @@
 //  例: 'medical-v1' → 'medical-v2'
 // ============================================================
 
-const CACHE_VERSION = 'medical-v13';
+const CACHE_VERSION = 'medical-v14';
 
 const FILES_TO_CACHE = [
   './',

@@ -1627,39 +1627,72 @@ const ITEMS = [
     shortLabel: "成人・医療用の心肺蘇生の手順と質の高いCPR",
     keywords: ["BLS", "一次救命処置", "心肺蘇生", "CPR", "胸骨圧迫", "人工呼吸", "AED", "除細動", "心停止", "急変", "死戦期呼吸", "ROSC", "バッグバルブマスク", "救命", "蘇生", "コードブルー"],
     summary: `
-      <p class="warn-box" style="margin-bottom:8px">成人・医療従事者用。<strong>まず施設の急変時対応方針（DNAR/急変時指示）を確認</strong>。フルコード（蘇生実施）の方針なら、以下を<u>ためらわず</u>開始する。数値は JRC蘇生ガイドライン2025（中核数値は2020から不変）。</p>
+      <p class="warn-box" style="margin-bottom:8px">成人・医療従事者用。<strong>まず施設の急変時方針（DNAR/急変時指示）を確認</strong>。フルコード（蘇生実施）ならためらわず開始。</p>
 
-      <p style="font-weight:700; margin-bottom:4px">手順</p>
-      <ol style="font-size:14px; padding-left:20px">
-        <li><strong>安全確認</strong>（周囲・自分の安全）</li>
-        <li><strong>反応の確認</strong>：肩を叩き大声で呼ぶ → 反応なし</li>
-        <li><strong>応援要請</strong>：院内コール（コードブルー等）＋<u>除細動器/AEDと救急カート</u>を依頼</li>
-        <li><strong>呼吸と頸動脈を同時に確認（10秒以内）</strong>：<span style="color:var(--warn)">死戦期呼吸（あえぎ呼吸）もCPRの適応</span>。判断に迷えば圧迫を開始（圧迫による害は小さい）</li>
-        <li><strong>ただちに胸骨圧迫を開始</strong>（下表の質を守る）</li>
-        <li><strong>人工呼吸</strong>：バッグバルブマスクで <strong>30:2</strong>（圧迫30回:換気2回）。1回の換気は約1秒、胸の上がりを確認</li>
-        <li><strong>AED/除細動器</strong>：到着したら電源→パッド装着→解析→適応ならショック→<u>直後にただちに圧迫再開</u>。2分ごとに解析・交代</li>
-        <li><strong>ROSC（自己心拍再開）</strong>または引き継ぎまで中断を最小に継続</li>
-      </ol>
+      <svg viewBox="0 0 352 478" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BLS 一次救命処置のフローチャート" style="width:100%; max-width:380px; height:auto; display:block; margin:6px auto">
+        <rect x="22" y="8" width="308" height="34" rx="7" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <text x="176" y="29" text-anchor="middle" font-size="12" fill="currentColor">① 反応を確認（肩をたたき大声で呼ぶ）</text>
+        <line x1="176" y1="42" x2="176" y2="60" stroke="currentColor" stroke-width="1.4"/>
+        <polygon points="172,54 180,54 176,60" fill="currentColor"/>
+        <text x="184" y="55" font-size="10" fill="currentColor">反応なし</text>
 
-      <p style="font-weight:700; margin:12px 0 4px">質の高いCPR</p>
-      <table class="detail-table">
-        <thead><tr><th>要素</th><th>基準</th></tr></thead>
-        <tbody>
-          <tr><td>圧迫の位置</td><td>胸骨の下半分（胸の真ん中）</td></tr>
-          <tr><td>テンポ</td><td><strong>100〜120回/分</strong></td></tr>
-          <tr><td>深さ</td><td><strong>約5cm</strong>（少なくとも5cm、<u>6cmを超えない</u>）</td></tr>
-          <tr><td>圧迫解除</td><td>毎回<strong>完全に</strong>胸を戻す（もたれない）</td></tr>
-          <tr><td>中断</td><td>最小限（<u>10秒以内</u>）。交代は2分ごと</td></tr>
-          <tr><td>換気比</td><td>30:2。<u>高度な気道確保後</u>は圧迫を止めず、換気は<strong>6秒に1回（10回/分）</strong></td></tr>
-        </tbody>
-      </table>
+        <rect x="22" y="60" width="308" height="42" rx="7" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <text x="176" y="77" text-anchor="middle" font-size="11" fill="currentColor">② 応援要請（院内コール／コードブルー）</text>
+        <text x="176" y="93" text-anchor="middle" font-size="11" fill="currentColor">＋ 除細動器・AED・救急カートを要請</text>
+        <line x1="176" y1="102" x2="176" y2="118" stroke="currentColor" stroke-width="1.4"/>
+        <polygon points="172,112 180,112 176,118" fill="currentColor"/>
 
-      <p style="font-weight:700; margin:12px 0 4px">ガイドライン2025のポイント（BLS）</p>
+        <rect x="22" y="118" width="308" height="42" rx="7" fill="none" stroke="currentColor" stroke-width="1.7"/>
+        <text x="176" y="135" text-anchor="middle" font-size="11" fill="currentColor">③ 呼吸と頸動脈を同時に確認（10秒以内）</text>
+        <text x="176" y="151" text-anchor="middle" font-size="10" fill="#c0504d">死戦期呼吸（あえぎ）もCPRの適応</text>
+        <path d="M176 160 L176 168 M96 168 L256 168 M96 168 L96 178 M256 168 L256 178" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <polygon points="92,172 100,172 96,178" fill="currentColor"/>
+        <polygon points="252,172 260,172 256,178" fill="currentColor"/>
+
+        <rect x="22" y="178" width="148" height="42" rx="7" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <text x="96" y="195" text-anchor="middle" font-size="10" fill="currentColor">呼吸なし/死戦期</text>
+        <text x="96" y="209" text-anchor="middle" font-size="10" fill="currentColor">脈なし・迷う</text>
+        <rect x="182" y="178" width="148" height="42" rx="7" fill="none" stroke="currentColor" stroke-width="1.3" stroke-dasharray="4,3"/>
+        <text x="256" y="195" text-anchor="middle" font-size="10" fill="currentColor">正常な呼吸・脈あり</text>
+        <text x="256" y="209" text-anchor="middle" font-size="10" fill="currentColor">→ 回復体位・観察</text>
+        <path d="M96 220 L96 230 L176 230 L176 238" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <polygon points="172,232 180,232 176,238" fill="currentColor"/>
+
+        <rect x="22" y="238" width="308" height="60" rx="7" fill="#2f7ea8" fill-opacity="0.92" stroke="none"/>
+        <text x="176" y="258" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">④ ただちに CPR（胸骨圧迫 : 換気 ＝ 30 : 2）</text>
+        <text x="176" y="275" text-anchor="middle" font-size="10" fill="#ffffff">100〜120回/分・深さ約5cm（6cmを超えない）</text>
+        <text x="176" y="290" text-anchor="middle" font-size="10" fill="#ffffff">毎回完全に戻す・中断10秒以内・2分で交代</text>
+        <line x1="176" y1="298" x2="176" y2="314" stroke="currentColor" stroke-width="1.4"/>
+        <polygon points="172,308 180,308 176,314" fill="currentColor"/>
+
+        <rect x="22" y="314" width="308" height="38" rx="7" fill="none" stroke="currentColor" stroke-width="1.7"/>
+        <text x="176" y="337" text-anchor="middle" font-size="11" fill="currentColor">⑤ AED/除細動器を装着し、リズムを解析</text>
+        <path d="M176 352 L176 360 M96 360 L256 360 M96 360 L96 370 M256 360 L256 370" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <polygon points="92,364 100,364 96,370" fill="currentColor"/>
+        <polygon points="252,364 260,364 256,370" fill="currentColor"/>
+
+        <rect x="22" y="370" width="148" height="46" rx="7" fill="#c0504d" fill-opacity="0.92" stroke="none"/>
+        <text x="96" y="388" text-anchor="middle" font-size="10.5" font-weight="700" fill="#ffffff">ショック適応</text>
+        <text x="96" y="403" text-anchor="middle" font-size="9.5" fill="#ffffff">1回ショック→直後CPR2分</text>
+        <rect x="182" y="370" width="148" height="46" rx="7" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <text x="256" y="388" text-anchor="middle" font-size="10.5" font-weight="700" fill="currentColor">ショック非適応</text>
+        <text x="256" y="403" text-anchor="middle" font-size="10" fill="currentColor">CPRを2分継続</text>
+        <path d="M96 416 L96 426 L176 426 L176 434 M256 416 L256 426 L176 426" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <polygon points="172,428 180,428 176,434" fill="currentColor"/>
+
+        <rect x="22" y="434" width="308" height="36" rx="7" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <text x="176" y="456" text-anchor="middle" font-size="11" fill="currentColor">⑥ 2分ごとに解析・交代を反復（ROSCまで）</text>
+        <path d="M330 452 C346 452 346 333 330 333" fill="none" stroke="currentColor" stroke-width="1.2"/>
+        <polygon points="336,329 336,337 330,333" fill="currentColor"/>
+      </svg>
+      <p style="font-size:11px; color:var(--text-sub); text-align:center">JRC蘇生ガイドライン2025（中核数値は2020から不変）</p>
+
+      <p style="font-weight:700; margin:12px 0 4px">ガイドライン2025のポイント</p>
       <ul style="font-size:13px; padding-left:18px">
+        <li>高度な気道確保後は圧迫を止めず、換気は<strong>6秒に1回（10回/分）</strong></li>
         <li>心停止でなくても<u>胸骨圧迫による害は小さい</u>—開始をためらわない</li>
         <li><strong>死戦期呼吸</strong>を「呼吸なし」と同様に扱いCPRを開始</li>
         <li>AEDは<u>自動でショックする機種（オートショックAED）</u>もある。音声指示に従う</li>
-        <li>パッドは素肌に貼る。過度な清拭で開始を遅らせない</li>
       </ul>
     `,
     trickyPoints: `
@@ -1691,37 +1724,80 @@ const ITEMS = [
     shortLabel: "成人の心停止アルゴリズム・薬剤・可逆的原因",
     keywords: ["ACLS", "ALS", "二次救命処置", "心停止アルゴリズム", "VF", "心室細動", "無脈性VT", "pVT", "PEA", "無脈性電気活動", "心静止", "アシストール", "アドレナリン", "エピネフリン", "アミオダロン", "リドカイン", "除細動", "4H4T", "可逆的原因", "気管挿管", "ETCO2", "蘇生", "急変"],
     summary: `
-      <p class="warn-box" style="margin-bottom:8px">成人。<u>質の高いCPRとリズムに応じた早期の対応が軸</u>。数値は JRC蘇生ガイドライン2025（薬剤量は2020から不変）。まず施設の急変時方針（DNAR等）を確認。</p>
+      <p class="warn-box" style="margin-bottom:8px">成人。<u>質の高いCPRとリズムに応じた早期対応が軸</u>。まず施設の急変時方針（DNAR等）を確認。</p>
 
-      <p style="font-weight:700; margin-bottom:4px">リズムでの分岐</p>
-      <table class="detail-table">
-        <thead><tr><th>ショック<u>適応</u>（VF / 無脈性VT）</th><th>ショック<u>非適応</u>（PEA / 心静止）</th></tr></thead>
-        <tbody>
-          <tr>
-            <td>
-              ① ショック1回 → <strong>ただちにCPR 2分</strong><br>
-              ② リズム確認、適応ならショック<br>
-              ③ <strong>2回目ショック後</strong>にアドレナリン開始、以後<u>3〜5分ごと</u><br>
-              ④ <strong>3回目ショック後</strong>にアミオダロン<u>300mg</u>（追加<u>150mg</u>）<br>
-              ⑤ CPR2分＋リズム確認を反復
-            </td>
-            <td>
-              ① CPRを継続（2分サイクル）<br>
-              ② アドレナリンを<strong>できるだけ早く</strong>投与、以後<u>3〜5分ごと</u><br>
-              ③ 2分ごとにリズム確認<br>
-              ④ ショック適応に変われば左の流れへ<br>
-              ⑤ <strong>可逆的原因（4H4T）を並行して検索・是正</strong>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div style="overflow-x:auto; -webkit-overflow-scrolling:touch">
+      <svg viewBox="0 0 470 458" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ACLS 成人心停止アルゴリズムのフローチャート" style="width:100%; min-width:440px; max-width:520px; height:auto; display:block; margin:6px auto">
+        <rect x="20" y="8" width="430" height="38" rx="7" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <text x="235" y="32" text-anchor="middle" font-size="12" fill="currentColor">心停止 — CPR開始・O₂投与・モニター/除細動器装着</text>
+        <line x1="235" y1="46" x2="235" y2="62" stroke="currentColor" stroke-width="1.4"/>
+        <polygon points="231,56 239,56 235,62" fill="currentColor"/>
 
-      <p style="font-weight:700; margin:12px 0 4px">薬剤</p>
+        <rect x="120" y="62" width="230" height="34" rx="7" fill="none" stroke="currentColor" stroke-width="1.7"/>
+        <text x="235" y="84" text-anchor="middle" font-size="12" fill="currentColor">リズムはショック適応か？</text>
+        <path d="M235 96 L235 104 M125 104 L345 104 M125 104 L125 114 M345 104 L345 114" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <polygon points="121,108 129,108 125,114" fill="currentColor"/>
+        <polygon points="341,108 349,108 345,114" fill="currentColor"/>
+
+        <rect x="20" y="114" width="210" height="30" rx="7" fill="#c0504d" fill-opacity="0.9" stroke="none"/>
+        <text x="125" y="133" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">ショック適応（VF/無脈性VT）</text>
+        <rect x="250" y="114" width="200" height="30" rx="7" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <text x="350" y="133" text-anchor="middle" font-size="10.5" font-weight="700" fill="currentColor">ショック非適応（PEA/心静止）</text>
+
+        <line x1="125" y1="144" x2="125" y2="156" stroke="currentColor" stroke-width="1.3"/>
+        <polygon points="121,150 129,150 125,156" fill="currentColor"/>
+        <rect x="20" y="156" width="210" height="46" rx="7" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <text x="125" y="174" text-anchor="middle" font-size="10.5" fill="currentColor">① ショック → 直後 CPR 2分</text>
+        <text x="125" y="191" text-anchor="middle" font-size="9.5" fill="currentColor">静脈路(IV)／骨髄路(IO)を確保</text>
+        <line x1="125" y1="202" x2="125" y2="214" stroke="currentColor" stroke-width="1.3"/>
+        <polygon points="121,208 129,208 125,214" fill="currentColor"/>
+        <rect x="20" y="214" width="210" height="58" rx="7" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <text x="125" y="231" text-anchor="middle" font-size="10" fill="currentColor">② リズム確認→ショック→CPR2分</text>
+        <text x="125" y="248" text-anchor="middle" font-size="10" font-weight="700" fill="currentColor">アドレナリン 1mg</text>
+        <text x="125" y="263" text-anchor="middle" font-size="9" fill="currentColor">（2回目ショック後〜／3〜5分ごと）</text>
+        <line x1="125" y1="272" x2="125" y2="284" stroke="currentColor" stroke-width="1.3"/>
+        <polygon points="121,278 129,278 125,284" fill="currentColor"/>
+        <rect x="20" y="284" width="210" height="58" rx="7" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <text x="125" y="301" text-anchor="middle" font-size="10" fill="currentColor">③ リズム確認→ショック→CPR2分</text>
+        <text x="125" y="318" text-anchor="middle" font-size="10" font-weight="700" fill="currentColor">アミオダロン 300mg</text>
+        <text x="125" y="333" text-anchor="middle" font-size="9" fill="currentColor">（3回目ショック後／追加150mg）</text>
+        <line x1="125" y1="342" x2="125" y2="354" stroke="currentColor" stroke-width="1.3"/>
+        <polygon points="121,348 129,348 125,354" fill="currentColor"/>
+        <rect x="20" y="354" width="210" height="34" rx="7" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <text x="125" y="375" text-anchor="middle" font-size="10.5" fill="currentColor">リズム確認を2分ごとに反復</text>
+
+        <line x1="350" y1="144" x2="350" y2="156" stroke="currentColor" stroke-width="1.3"/>
+        <polygon points="346,150 354,150 350,156" fill="currentColor"/>
+        <rect x="250" y="156" width="200" height="58" rx="7" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <text x="350" y="174" text-anchor="middle" font-size="10.5" fill="currentColor">① CPR 2分</text>
+        <text x="350" y="191" text-anchor="middle" font-size="10" font-weight="700" fill="currentColor">アドレナリン 1mg を早期に</text>
+        <text x="350" y="206" text-anchor="middle" font-size="9" fill="currentColor">（以後 3〜5分ごと）</text>
+        <line x1="350" y1="214" x2="350" y2="226" stroke="currentColor" stroke-width="1.3"/>
+        <polygon points="346,220 354,220 350,226" fill="currentColor"/>
+        <rect x="250" y="226" width="200" height="46" rx="7" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <text x="350" y="246" text-anchor="middle" font-size="10" fill="currentColor">② 可逆的原因（4H4T）を</text>
+        <text x="350" y="261" text-anchor="middle" font-size="10" fill="currentColor">検索・是正</text>
+        <line x1="350" y1="272" x2="350" y2="284" stroke="currentColor" stroke-width="1.3"/>
+        <polygon points="346,278 354,278 350,284" fill="currentColor"/>
+        <rect x="250" y="284" width="200" height="58" rx="7" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <text x="350" y="301" text-anchor="middle" font-size="10" fill="currentColor">③ リズム確認</text>
+        <text x="350" y="317" text-anchor="middle" font-size="9.5" fill="currentColor">適応化 → 左の流れへ</text>
+        <text x="350" y="332" text-anchor="middle" font-size="9.5" fill="currentColor">非適応 → CPR継続</text>
+
+        <path d="M125 388 L125 396 L350 396 L350 342 M235 396 L235 404" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <polygon points="231,398 239,398 235,404" fill="currentColor"/>
+        <rect x="20" y="404" width="430" height="46" rx="7" fill="none" stroke="currentColor" stroke-width="1.7"/>
+        <text x="235" y="424" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">ROSC（自己心拍再開）→ 心拍再開後のケア</text>
+        <text x="235" y="440" text-anchor="middle" font-size="9.5" fill="currentColor">気道/呼吸/循環の安定化・12誘導心電図・体温管理・原因検索</text>
+      </svg>
+      </div>
+
+      <p style="font-weight:700; margin:12px 0 4px">薬剤（クイック）</p>
       <table class="detail-table">
         <thead><tr><th>薬剤</th><th>用量・タイミング</th></tr></thead>
         <tbody>
           <tr><td><strong>アドレナリン</strong></td><td>1mg 静注/骨髄内、<u>3〜5分ごと</u>。<span style="color:var(--warn)">非適応リズムは早期に</span>／適応リズムは2回目ショック後から</td></tr>
-          <tr><td><strong>アミオダロン</strong></td><td>初回<u>300mg</u>、必要なら追加<u>150mg</u>（難治性VF/無脈性VT）</td></tr>
+          <tr><td><strong>アミオダロン</strong></td><td>初回<u>300mg</u>、追加<u>150mg</u>（難治性VF/無脈性VT）</td></tr>
           <tr><td>リドカイン</td><td>アミオダロンの代替：1〜1.5mg/kg（追加0.5〜0.75mg/kg）</td></tr>
         </tbody>
       </table>
@@ -1737,16 +1813,14 @@ const ITEMS = [
         </tbody>
       </table>
 
-      <p style="font-weight:700; margin:12px 0 4px">除細動エネルギー</p>
-      <p style="font-size:13px">二相性：<strong>機種の推奨値</strong>（不明なら最大）。単相性：<strong>360J</strong>。ショック直後は<u>ただちにCPR再開</u>。</p>
+      <p style="font-size:13px; margin-top:8px">除細動エネルギー：二相性は<strong>機種の推奨値</strong>（不明なら最大）／単相性<strong>360J</strong>。</p>
 
       <p style="font-weight:700; margin:12px 0 4px">ガイドライン2025のポイント（ALS）</p>
       <ul style="font-size:13px; padding-left:18px">
         <li>投与経路は<strong>静脈路(IV)を第一選択</strong>（確保困難なら骨髄内IO）</li>
         <li>3回以上のショックでも持続するVF/無脈性VTに、<strong>DSED（二重連続除細動）またはパッドのベクトル変更</strong>を考慮</li>
         <li>気管挿管後は<strong>ETCO₂波形</strong>で位置確認・CPRの質・ROSCを評価</li>
-        <li>バソプレシン単独・追加はルーチンで推奨しない。カルシウム・重炭酸もルーチン非推奨</li>
-        <li>自動胸骨圧迫装置はルーチンでは使用しない</li>
+        <li>バソプレシン単独・追加、カルシウム・重炭酸はルーチン非推奨</li>
       </ul>
     `,
     trickyPoints: `
