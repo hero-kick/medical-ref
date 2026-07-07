@@ -6,7 +6,7 @@
 //  例: 'medical-v1' → 'medical-v2'
 // ============================================================
 
-const CACHE_VERSION = 'medical-v10';
+const CACHE_VERSION = 'medical-v11';
 
 const FILES_TO_CACHE = [
   './',
@@ -32,8 +32,15 @@ self.addEventListener('install', event => {
           )
         )
       )
-    ).then(() => self.skipWaiting())
+    )
+    // skipWaiting はここでは呼ばない。
+    // 新バージョンは「更新」ボタン（SKIP_WAITING メッセージ）で反映する。
   );
+});
+
+// ページからの更新指示を受けたら待機を解除して即時有効化
+self.addEventListener('message', event => {
+  if (event.data === 'SKIP_WAITING') self.skipWaiting();
 });
 
 // 有効化時: 古いキャッシュを削除してからすべてのクライアントを制御下に置く

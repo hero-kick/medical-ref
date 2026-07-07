@@ -1,18 +1,47 @@
 {
+  "id": "/medical-ref/",
   "name": "医療参照ツール",
   "short_name": "医療参照",
-  "description": "療養型病院 日常確認用オフライン参照",
+  "description": "療養型病院の日常業務で使う医療区分・自立度・薬剤・血液検査などを、迷わず判定できる形でまとめたオフライン参照ツール。",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
   "background_color": "#f5f5f5",
   "theme_color": "#1a6b9a",
   "lang": "ja",
+  "dir": "ltr",
+  "categories": ["medical", "productivity", "utilities"],
   "icons": [
     {
       "src": "icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "医療区分",
+      "short_name": "医療区分",
+      "url": "./index.html#iryo_kubun"
+    },
+    {
+      "name": "血液検査データの見方",
+      "short_name": "血液検査",
+      "url": "./index.html#ketsueki_kensa"
+    },
+    {
+      "name": "意識レベル（JCS/GCS）",
+      "short_name": "意識レベル",
+      "url": "./index.html#ishiki_level"
     }
   ]
 }

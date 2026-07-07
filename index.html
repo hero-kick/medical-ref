@@ -2,14 +2,22 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>医療参照ツール</title>
+  <meta name="description" content="療養型病院の日常業務で使う医療区分・自立度・薬剤・血液検査などを、迷わず判定できる形でまとめたオフライン参照ツール。">
+  <meta name="color-scheme" content="light dark">
+  <!-- 共有時のプレビュー -->
+  <meta property="og:title" content="医療参照ツール">
+  <meta property="og:description" content="療養型病院 日常確認用のオフライン医療参照ツール">
+  <meta property="og:type" content="website">
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#1a6b9a">
+  <meta name="theme-color" content="#1a6b9a" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
   <!-- iOS ホーム画面追加サポート -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="医療参照">
   <link rel="apple-touch-icon" href="icon.svg">
   <style>
@@ -435,6 +443,210 @@
       cursor: pointer;
       z-index: 20;
     }
+
+    /* ===== ヘッダー操作ボタン ===== */
+    .header-btns { display: flex; gap: 6px; flex-shrink: 0; }
+    .icon-btn {
+      width: 36px;
+      height: 32px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    /* オフラインバッジ */
+    #net-status {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--warn);
+      background: var(--warn-bg);
+      border: 1px solid var(--warn);
+      border-radius: 999px;
+      padding: 2px 8px;
+      margin-top: 8px;
+      width: fit-content;
+    }
+    body.is-offline #net-status { display: inline-flex; }
+
+    /* ===== 設定パネル ===== */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 40;
+    }
+    .overlay.show { opacity: 1; pointer-events: auto; }
+    #settings-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: min(86vw, 360px);
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      box-shadow: -2px 0 12px rgba(0,0,0,0.2);
+      transform: translateX(100%);
+      transition: transform 0.22s ease;
+      z-index: 50;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    #settings-panel.show { transform: translateX(0); }
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--surface);
+    }
+    .panel-head h2 { font-size: 16px; font-weight: 700; }
+    .panel-body { padding: 16px; }
+    .panel-section { margin-bottom: 22px; }
+    .panel-section > h3 {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+    }
+    /* セグメント（テーマ・文字サイズ） */
+    .seg {
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .seg button {
+      flex: 1;
+      border: none;
+      background: var(--bg);
+      color: var(--text-sub);
+      font-family: inherit;
+      font-size: 13px;
+      padding: 9px 4px;
+      cursor: pointer;
+      border-right: 1px solid var(--border);
+    }
+    .seg button:last-child { border-right: none; }
+    .seg button.active { background: var(--accent); color: #fff; font-weight: 700; }
+    .panel-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: center;
+    }
+    .panel-btn.secondary { background: none; color: var(--accent); }
+    .panel-btn:disabled { opacity: 0.5; cursor: default; }
+    .panel-note { font-size: 12px; color: var(--text-sub); line-height: 1.6; }
+    .panel-note strong { color: var(--text); }
+    .panel-kbd {
+      display: inline-block;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg);
+      padding: 0 6px;
+      font-size: 12px;
+      font-family: ui-monospace, monospace;
+    }
+
+    /* ===== トースト（更新通知など） ===== */
+    #toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%) translateY(160%);
+      max-width: 92vw;
+      background: var(--text);
+      color: var(--surface);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 60;
+      transition: transform 0.25s ease;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+    #toast button {
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* ===== フッター ===== */
+    #app-footer {
+      margin: 24px 12px 0;
+      padding: 14px 4px 0;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-sub);
+      line-height: 1.7;
+      text-align: center;
+    }
+    #app-footer button {
+      border: none;
+      background: none;
+      color: var(--accent);
+      font-size: 11px;
+      font-family: inherit;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+    }
+
+    /* ===== 文字サイズ設定（読む本文・表を拡大） ===== */
+    body.font-lg .summary-title { font-size: 17px; }
+    body.font-lg .summary-label { font-size: 14px; }
+    body.font-lg .section p, body.font-lg .section li { font-size: 15px; }
+    body.font-lg .detail-table { font-size: 14px; }
+    body.font-lg .detail-body pre { font-size: 14px; }
+    body.font-xl .summary-title { font-size: 19px; }
+    body.font-xl .summary-label { font-size: 15px; }
+    body.font-xl .section p, body.font-xl .section li { font-size: 17px; }
+    body.font-xl .detail-table { font-size: 15px; }
+    body.font-xl .detail-body pre { font-size: 15px; }
+
+    /* ===== 印刷（開いているカードを参照シートとして印刷） ===== */
+    @media print {
+      header, #cat-chips, .toolbar, #back-to-top, #settings-toggle,
+      #theme-toggle, .pin-btn, .copy-btn, .pdf-btn, #net-status,
+      #settings-panel, .overlay, #toast, #search-clear { display: none !important; }
+      body { max-width: none; font-size: 12px; }
+      .item-card { break-inside: avoid; box-shadow: none; border-color: #999; }
+      .item-card details:not([open]) { display: none; }
+      .detail-table th, .detail-table td { border-color: #999; }
+      a[href]::after { content: ""; }
+    }
   </style>
 </head>
 <body>
@@ -442,10 +654,13 @@
 <header>
   <div class="header-top">
     <h1>医療参照ツール <span>療養型病院 日常確認用</span></h1>
-    <button id="theme-toggle" type="button" aria-label="ダーク/ライト切替">🌙</button>
+    <div class="header-btns">
+      <button id="theme-toggle" class="icon-btn" type="button" aria-label="ダーク/ライト切替">🌙</button>
+      <button id="settings-toggle" class="icon-btn" type="button" aria-label="設定を開く" aria-haspopup="dialog">⚙️</button>
+    </div>
   </div>
   <div class="search-row">
-    <input type="search" id="search" placeholder="キーワードで検索（スペース区切りでAND）" autocomplete="off">
+    <input type="search" id="search" placeholder="キーワードで検索（スペース区切りでAND）" autocomplete="off" enterkeyhint="search">
     <button id="search-clear" type="button" aria-label="検索をクリア" hidden>✕</button>
   </div>
   <div id="cat-chips" role="group" aria-label="カテゴリで絞り込み"></div>
@@ -453,17 +668,75 @@
     <span id="hit-count"></span>
     <button id="toggle-all" type="button">すべて開く</button>
   </div>
+  <span id="net-status" role="status">● オフライン（保存済みデータで表示中）</span>
 </header>
 
 
 <p id="disclaimer">
-  このツールは個人用の参照補助です。診療・ケアの判断は必ず最新の公式資料・施設基準・主治医の指示に従ってください。
+  <strong>医療従事者向けの参照補助ツールです。</strong>本ツールの内容は作成時点の公式資料に基づく要約であり、正確性・最新性を保証しません。診療・ケア・算定の最終判断は、必ず最新の告示・通知・施設基準・主治医の指示に従ってください。本ツールの利用により生じたいかなる結果についても、提供者は責任を負いません。
 </p>
 
 <div id="item-list"></div>
 <p id="empty-msg" hidden>該当する項目がありません</p>
 
+<footer id="app-footer">
+  <div>医療参照ツール <span id="footer-version"></span></div>
+  <div>収載 <span id="footer-count"></span>項目 ／ データ最終更新 <span id="footer-updated"></span></div>
+  <div style="margin-top:4px"><button id="footer-about" type="button">このツールについて・免責事項</button></div>
+</footer>
+
 <button id="back-to-top" type="button" aria-label="先頭へ戻る" hidden>↑</button>
+
+<!-- 設定パネル -->
+<div id="overlay" class="overlay"></div>
+<aside id="settings-panel" role="dialog" aria-modal="true" aria-label="設定" hidden>
+  <div class="panel-head">
+    <h2>設定</h2>
+    <button id="settings-close" class="icon-btn" type="button" aria-label="閉じる">✕</button>
+  </div>
+  <div class="panel-body">
+    <div class="panel-section">
+      <h3>表示テーマ</h3>
+      <div class="seg" id="seg-theme">
+        <button type="button" data-theme-val="auto">自動</button>
+        <button type="button" data-theme-val="light">ライト</button>
+        <button type="button" data-theme-val="dark">ダーク</button>
+      </div>
+    </div>
+    <div class="panel-section">
+      <h3>文字サイズ</h3>
+      <div class="seg" id="seg-font">
+        <button type="button" data-font-val="std">標準</button>
+        <button type="button" data-font-val="lg">大</button>
+        <button type="button" data-font-val="xl">特大</button>
+      </div>
+    </div>
+    <div class="panel-section" id="install-section" hidden>
+      <h3>アプリとして使う</h3>
+      <button id="install-btn" class="panel-btn" type="button">ホーム画面に追加</button>
+      <p class="panel-note" style="margin-top:6px">インストールすると、オフラインでも起動でき、全画面で表示されます。</p>
+    </div>
+    <div class="panel-section">
+      <h3>ヒント</h3>
+      <p class="panel-note">
+        <span class="panel-kbd">/</span> で検索へ移動、<span class="panel-kbd">Esc</span> で検索クリア。<br>
+        カード右上の <strong>★</strong> でよく使う項目を先頭に固定。<br>
+        開いた項目のURLはそのまま共有・ブックマークできます。
+      </p>
+    </div>
+    <div class="panel-section">
+      <h3>このツールについて</h3>
+      <p class="panel-note">
+        <strong>医療参照ツール</strong> <span id="about-version"></span><br>
+        収載 <span id="about-count"></span>項目 ／ データ最終更新 <span id="about-updated"></span><br>
+        <span style="display:block; margin-top:8px">本ツールは医療従事者向けの参照補助であり、作成時点の公式資料に基づく要約です。正確性・最新性を保証するものではなく、診療・ケア・算定の最終判断は必ず最新の公式資料と施設基準、主治医の指示に従ってください。本ツールの利用により生じた結果について提供者は責任を負いません。</span>
+      </p>
+    </div>
+  </div>
+</aside>
+
+<!-- トースト -->
+<div id="toast" role="status" hidden><span id="toast-msg"></span><button id="toast-action" type="button" hidden></button></div>
 
 <script>
 // ============================================================
@@ -1395,6 +1668,7 @@ function copyText(text, btn) {
 function renderItem(item) {
   const card = document.createElement("div");
   card.className = "item-card";
+  card.id = item.id;              // URL ハッシュで直接開けるアンカー
   card.dataset.id = item.id;
   card.dataset.category = item.category || "";
   // 検索対象: タイトル・サブタイトル・キーワードに加え、本文（HTMLタグ除去）とメモも含める
@@ -1462,6 +1736,13 @@ function renderItem(item) {
   // 記載メモのコピー
   card.querySelector(".copy-btn").addEventListener("click", e => {
     copyText(item.noteTemplate, e.currentTarget);
+  });
+
+  // 開いた項目を URL ハッシュに反映（共有・ブックマーク用。履歴は汚さない）
+  card.querySelector("details").addEventListener("toggle", e => {
+    if (e.target.open && location.hash !== "#" + item.id) {
+      history.replaceState(null, "", "#" + item.id);
+    }
   });
 
   return card;
@@ -1547,41 +1828,223 @@ backToTopEl.addEventListener("click", () => {
 });
 
 // ============================================================
-//  テーマ切替（未設定時は OS 設定に追従、手動切替を localStorage に保存）
+//  テーマ（自動 / ライト / ダーク）
 // ============================================================
 const themeToggleEl = document.getElementById("theme-toggle");
 
-function reflectThemeButton() {
-  const dark = document.documentElement.dataset.theme === "dark" ||
-    (!document.documentElement.dataset.theme &&
-      window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
-  themeToggleEl.textContent = dark ? "☀️" : "🌙";
+function isDarkNow() {
+  const t = document.documentElement.dataset.theme;
+  if (t === "dark") return true;
+  if (t === "light") return false;
+  return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+}
+
+function applyTheme(mode) {
+  // mode: "auto" | "light" | "dark"
+  if (mode === "auto") {
+    delete document.documentElement.dataset.theme;
+    storeSet("medref-theme", "auto");
+  } else {
+    document.documentElement.dataset.theme = mode;
+    storeSet("medref-theme", mode);
+  }
+  themeToggleEl.textContent = isDarkNow() ? "☀️" : "🌙";
+  document.querySelectorAll("#seg-theme button").forEach(b =>
+    b.classList.toggle("active", b.dataset.themeVal === (mode || "auto")));
 }
 
 const savedTheme = storeGet("medref-theme");
-if (savedTheme === "light" || savedTheme === "dark") {
-  document.documentElement.dataset.theme = savedTheme;
-}
-reflectThemeButton();
+applyTheme(savedTheme === "light" || savedTheme === "dark" ? savedTheme : "auto");
 
-themeToggleEl.addEventListener("click", () => {
-  const nowDark = document.documentElement.dataset.theme === "dark" ||
-    (!document.documentElement.dataset.theme &&
-      window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
-  const next = nowDark ? "light" : "dark";
-  document.documentElement.dataset.theme = next;
-  storeSet("medref-theme", next);
-  reflectThemeButton();
+// ヘッダーのボタンは「今と逆」にワンタップ切替
+themeToggleEl.addEventListener("click", () => applyTheme(isDarkNow() ? "light" : "dark"));
+document.querySelectorAll("#seg-theme button").forEach(b =>
+  b.addEventListener("click", () => applyTheme(b.dataset.themeVal)));
+
+// ============================================================
+//  文字サイズ（標準 / 大 / 特大）
+// ============================================================
+function applyFontSize(size) {
+  document.body.classList.remove("font-lg", "font-xl");
+  if (size === "lg") document.body.classList.add("font-lg");
+  else if (size === "xl") document.body.classList.add("font-xl");
+  else size = "std";
+  storeSet("medref-font", size);
+  document.querySelectorAll("#seg-font button").forEach(b =>
+    b.classList.toggle("active", b.dataset.fontVal === size));
+}
+applyFontSize(storeGet("medref-font") || "std");
+document.querySelectorAll("#seg-font button").forEach(b =>
+  b.addEventListener("click", () => applyFontSize(b.dataset.fontVal)));
+
+// ============================================================
+//  設定パネル
+// ============================================================
+const overlayEl = document.getElementById("overlay");
+const panelEl = document.getElementById("settings-panel");
+
+function openSettings() {
+  panelEl.hidden = false;
+  // hidden 解除直後にトランジションを効かせる
+  requestAnimationFrame(() => {
+    overlayEl.classList.add("show");
+    panelEl.classList.add("show");
+  });
+}
+function closeSettings() {
+  overlayEl.classList.remove("show");
+  panelEl.classList.remove("show");
+  setTimeout(() => { panelEl.hidden = true; }, 220);
+}
+document.getElementById("settings-toggle").addEventListener("click", openSettings);
+document.getElementById("settings-close").addEventListener("click", closeSettings);
+document.getElementById("footer-about").addEventListener("click", openSettings);
+overlayEl.addEventListener("click", closeSettings);
+
+// ============================================================
+//  バージョン・データ情報
+// ============================================================
+const APP_VERSION = "v1.4.0";
+const dataUpdated = ITEMS
+  .map(i => (i.updatedAt || "").slice(0, 10))
+  .filter(s => /^\d{4}-\d{2}-\d{2}$/.test(s))
+  .sort()
+  .pop() || "—";
+const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+setText("footer-version", APP_VERSION);
+setText("footer-count", ITEMS.length);
+setText("footer-updated", dataUpdated);
+setText("about-version", APP_VERSION);
+setText("about-count", ITEMS.length);
+setText("about-updated", dataUpdated);
+
+// ============================================================
+//  URL ハッシュから該当項目を開く
+// ============================================================
+function openFromHash() {
+  const id = decodeURIComponent(location.hash.replace(/^#/, ""));
+  if (!id) return;
+  const card = document.getElementById(id);
+  if (!card || !card.classList.contains("item-card")) return;
+  // 検索・カテゴリで隠れていても開けるようにフィルタを解除
+  if (card.hidden) {
+    searchEl.value = "";
+    activeCategory = "";
+    chipsEl.querySelectorAll(".chip").forEach((c, i) => c.classList.toggle("active", i === 0));
+    applyFilter();
+  }
+  const details = card.querySelector("details");
+  if (details) details.open = true;
+  card.scrollIntoView({ block: "start" });
+}
+window.addEventListener("hashchange", openFromHash);
+openFromHash();
+
+// ============================================================
+//  キーボードショートカット（PC 利用時）
+// ============================================================
+document.addEventListener("keydown", e => {
+  if (e.key === "/" && document.activeElement !== searchEl) {
+    e.preventDefault();
+    searchEl.focus();
+  } else if (e.key === "Escape") {
+    if (panelEl && !panelEl.hidden) { closeSettings(); }
+    else if (searchEl.value) { searchEl.value = ""; applyFilter(); }
+  }
 });
 
 // ============================================================
-//  PWA: Service Worker 登録（サイレント）
+//  オンライン / オフライン表示
 // ============================================================
+function reflectNetStatus() {
+  document.body.classList.toggle("is-offline", navigator.onLine === false);
+}
+window.addEventListener("online", reflectNetStatus);
+window.addEventListener("offline", reflectNetStatus);
+reflectNetStatus();
+
+// ============================================================
+//  トースト
+// ============================================================
+const toastEl = document.getElementById("toast");
+const toastMsgEl = document.getElementById("toast-msg");
+const toastActionEl = document.getElementById("toast-action");
+let toastTimer = null;
+
+function showToast(msg, actionLabel, onAction, autoHideMs) {
+  toastMsgEl.textContent = msg;
+  if (actionLabel) {
+    toastActionEl.textContent = actionLabel;
+    toastActionEl.hidden = false;
+    toastActionEl.onclick = () => { hideToast(); if (onAction) onAction(); };
+  } else {
+    toastActionEl.hidden = true;
+  }
+  toastEl.hidden = false;
+  requestAnimationFrame(() => toastEl.classList.add("show"));
+  if (toastTimer) clearTimeout(toastTimer);
+  if (autoHideMs) toastTimer = setTimeout(hideToast, autoHideMs);
+}
+function hideToast() {
+  toastEl.classList.remove("show");
+  setTimeout(() => { toastEl.hidden = true; }, 250);
+}
+
+// ============================================================
+//  PWA インストール導線
+// ============================================================
+let deferredInstall = null;
+const installSection = document.getElementById("install-section");
+const installBtn = document.getElementById("install-btn");
+
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault();
+  deferredInstall = e;
+  if (installSection) installSection.hidden = false;
+});
+if (installBtn) {
+  installBtn.addEventListener("click", async () => {
+    if (!deferredInstall) return;
+    deferredInstall.prompt();
+    try { await deferredInstall.userChoice; } catch (e) {}
+    deferredInstall = null;
+    if (installSection) installSection.hidden = true;
+  });
+}
+window.addEventListener("appinstalled", () => {
+  if (installSection) installSection.hidden = true;
+  showToast("アプリを追加しました", null, null, 2500);
+});
+
+// ============================================================
+//  Service Worker 登録＋更新通知（更新は利用者の操作で反映）
+// ============================================================
+function initServiceWorker() {
+  if (!("serviceWorker" in navigator)) return;
+  navigator.serviceWorker.register("./sw.js").then(reg => {
+    reg.addEventListener("updatefound", () => {
+      const nw = reg.installing;
+      if (!nw) return;
+      nw.addEventListener("statechange", () => {
+        if (nw.state === "installed" && navigator.serviceWorker.controller) {
+          showToast("新しいバージョンがあります", "更新", () => {
+            if (reg.waiting) reg.waiting.postMessage("SKIP_WAITING");
+          });
+        }
+      });
+    });
+  }).catch(() => {});
+  let reloading = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (reloading) return;
+    reloading = true;
+    window.location.reload();
+  });
+}
 
 (function () {
-  if (location.protocol === 'file:') return;
-  if (!('serviceWorker' in navigator)) return;
-  navigator.serviceWorker.register('./sw.js').catch(() => {});
+  if (location.protocol === "file:") return;
+  initServiceWorker();
 }());
 </script>
 </body>
