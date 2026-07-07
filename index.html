@@ -1193,8 +1193,8 @@ const ITEMS = [
     id: "shindansho_shiin",
     title: "死亡診断書 — 死因の書き方",
     category: "書類",
-    shortLabel: "I欄・II欄の記載ルール、老衰・持病がある場合の対応",
-    keywords: ["死亡診断書", "死体検案書", "死因", "I欄", "II欄", "老衰", "原死因", "誤嚥性肺炎", "心不全", "呼吸不全"],
+    shortLabel: "I欄・II欄の記載ルール、がん・老衰・死因不明のときの対応",
+    keywords: ["死亡診断書", "死体検案書", "死因", "I欄", "II欄", "老衰", "原死因", "誤嚥性肺炎", "心不全", "呼吸不全", "悪性腫瘍", "がん", "癌", "悪性新生物", "転移", "原発", "組織型", "不詳", "詳細不明", "死因の種類", "医学的因果関係", "解剖", "付言"],
     summary: `
       <p style="font-size:12px; color:var(--text-sub); margin-bottom:8px">出典：厚生労働省「死亡診断書記入マニュアル」令和8年度版（p9〜p22）</p>
 
@@ -1210,27 +1210,48 @@ const ITEMS = [
       </table>
 
       <p style="font-weight:700; margin:10px 0 4px">II欄</p>
-      <p style="margin-bottom:8px">直接死因に<strong>関係しないが経過に影響した傷病</strong>（例：糖尿病、高血圧など既往）</p>
+      <p style="margin-bottom:8px">マニュアル原文：<u>「直接には死因に関係していないが、I欄の傷病等の経過に影響を及ぼした傷病名等があれば記入」</u>。糖尿病・高血圧・CKD などの併存疾患や、<strong>死因ではないがん</strong>はここに書く。</p>
+
+      <p style="font-weight:700; margin:14px 0 4px">がん（悪性新生物）の書き方</p>
+      <ul style="font-size:13px; padding-left:18px; margin-bottom:6px">
+        <li><strong>転移で死亡</strong>：転移先を「<u>転移性</u>○○癌」と書き、<u>原発性が最下欄</u>になるように並べる（下の例参照）</li>
+        <li><strong>原発部位・組織型・転移の別・部位</strong>を分かる範囲で必ず記載（<span style="color:var(--warn)">これで死因分類が変わるため</span>）</li>
+      </ul>
+      <p class="warn-box" style="margin-bottom:8px"><strong>「がんはあるが、それが死因か分からない」とき</strong>（＝転移もなく、直接の死につながったか不明）<br>
+      死亡診断書は<u>確定診断書ではなく、医師が最も可能性が高いと判断した因果関係</u>でよい（剖検は不要）。次の順で考える：
+      <span style="display:block; margin-top:6px">① がんが死につながる経過（悪液質・出血・閉塞・臓器不全など）を起こしたと<u>判断できる</u> → <strong>I欄</strong>の因果連鎖に入れる</span>
+      <span style="display:block">② がんは存在したが直接の死因ではなく<u>経過に影響した</u>程度 → <strong>II欄</strong>（原発部位・組織型を記載）</span>
+      <span style="display:block">③ 死とほぼ<u>無関係</u>と判断できる → 死因としては書かず、必要なら付言欄で状況を補足</span>
+      <span style="display:block">④ 実際の死因（例：誤嚥性肺炎・老衰など）は<strong>I欄に医学的因果関係の順で記載</strong></span>
+      <span style="display:block">⑤ どうしても死因を確定できないときのみ → I欄「詳細不明／不詳」、死因の種類は「<strong>12 不詳の死</strong>」。安易に選ばず、まず最も確からしい連鎖を医師の判断で書く</span></p>
 
       <p style="font-weight:700; margin-bottom:4px">療養型病院でよくあるパターン</p>
       <table class="detail-table">
-        <thead><tr><th style="width:14em">状況</th><th>I欄の書き方</th></tr></thead>
+        <thead><tr><th style="width:15em">状況</th><th>記載例</th></tr></thead>
         <tbody>
           <tr>
             <td>老衰のみ（他に病態なし）</td>
-            <td>(ア) 老衰</td>
+            <td>I(ア) 老衰</td>
           </tr>
           <tr>
             <td>老衰から誤嚥性肺炎を併発</td>
-            <td>(ア) 誤嚥性肺炎<br>(イ) 老衰</td>
+            <td>I(ア) 誤嚥性肺炎<br>I(イ) 老衰</td>
           </tr>
           <tr>
             <td>脳卒中後→廃用→肺炎</td>
-            <td>(ア) 肺炎<br>(イ) 廃用症候群<br>(ウ) 脳梗塞（発症から○年）</td>
+            <td>I(ア) 肺炎<br>I(イ) 廃用症候群<br>I(ウ) 脳梗塞（発症から○年）</td>
           </tr>
           <tr>
-            <td>悪性腫瘍（転移死）</td>
-            <td>(ア) 肝不全<br>(イ) 転移性肝癌<br>(ウ) 原発性 S状結腸癌</td>
+            <td>悪性腫瘍が転移して死亡</td>
+            <td>I(ア) 肝不全<br>I(イ) 転移性肝癌<br>I(ウ) 原発性 S状結腸癌（腺癌）</td>
+          </tr>
+          <tr>
+            <td><strong>がんはあるが、肺炎で死亡</strong><br>（がんは転移なし・死因は肺炎）</td>
+            <td>I(ア) 誤嚥性肺炎<br>II欄 胃癌（原発・腺癌、○年、治療中）<br><span style="font-size:11px; color:var(--text-sub)">＝がんは死因でないのでII欄へ</span></td>
+          </tr>
+          <tr>
+            <td><strong>がんが死に関与したか不明</strong>だが衰弱の一因と判断</td>
+            <td>I(ア) がん悪液質<br>I(イ) 原発性膵癌（腺癌、○か月）<br><span style="font-size:11px; color:var(--text-sub)">＝関与ありと判断すればI欄</span></td>
           </tr>
           <tr>
             <td>慢性腎臓病が背景</td>
@@ -1238,23 +1259,38 @@ const ITEMS = [
           </tr>
         </tbody>
       </table>
+
+      <p style="font-weight:700; margin:12px 0 4px">死因が確定できない・迷うとき</p>
+      <table class="detail-table">
+        <thead><tr><th style="width:12em">状況</th><th>記載</th></tr></thead>
+        <tbody>
+          <tr><td>検査結果待ちで確定できない</td><td>I欄「<strong>不詳（検索中）</strong>」</td></tr>
+          <tr><td>検査は済んだが傷病名が最終的に分からない</td><td>I欄「<strong>詳細不明</strong>」または「不詳」（<u>空欄にしない</u>）</td></tr>
+          <tr><td>I欄に「不詳」等を記載したとき</td><td>死因の種類は「<strong>12 不詳の死</strong>」を選択</td></tr>
+          <tr><td>病死か外因死か判断できない</td><td>「12 不詳の死」とし、付言欄に状況を詳述</td></tr>
+        </tbody>
+      </table>
     `,
     trickyPoints: `
       <ul>
-        <li><strong>老衰は「他に死亡原因がない」ときのみ使用</strong>。老衰があっても誤嚥性肺炎などで亡くなった場合は、(ア)に肺炎、(イ)に老衰と記載する</li>
-        <li><strong>「心不全」「呼吸不全」は終末期状態としての単独記載不可</strong>（明確な病態としての心不全は可）。原因傷病をその上に記載するか、I欄に書けない場合はII欄に背景疾患を補う</li>
+        <li><strong>死亡診断書は「確定診断書」ではない</strong>：医師が医学的に最も可能性が高いと判断した因果関係を書けばよく、剖検・確定検査は必須でない。ただし外因が疑われる／死因が不明なときは「12 不詳の死」とし、異状死の届出要否も検討する</li>
+        <li><strong>がんは「死因かどうか」で欄が変わる</strong>：死につながったと判断すればI欄、併存して経過に影響した程度ならII欄、無関係なら書かない。いずれも<u>原発・組織型・部位・転移の別</u>を分かる範囲で記載（死因分類が変わるため）</li>
+        <li><strong>転移で死亡した場合の並び</strong>：転移先を「転移性○○癌」、原発性を<u>最下欄</u>に。上の欄ほど死に近い（(ア)が直接死因）</li>
+        <li><strong>老衰は「他に死亡原因がない」自然死のときのみ</strong>。老衰があっても誤嚥性肺炎などで亡くなった場合は (ア)に肺炎、(イ)に老衰</li>
+        <li><strong>「心不全」「呼吸不全」は終末期状態としての記載不可</strong>（明らかな病態としての心不全・呼吸不全は可）。心停止・呼吸停止をもって記入しない</li>
         <li><strong>原死因 = I欄最下欄の傷病</strong>（その傷病が上欄すべてを引き起こせる場合）。I欄で決まらないときはII欄が原死因候補になる</li>
-        <li>傷病名は略語を避ける（AMI→急性心筋梗塞、SAH→くも膜下出血 など）</li>
-        <li>各傷病名に「発病から死亡までの期間」を記載する（例：2年、3か月）</li>
-        <li>「寝たきり」「ADL低下」は傷病名でないため記載不可</li>
-        <li>死亡時刻は<strong>死亡確認時刻ではなく死亡時刻</strong>を記入（救急搬送中のみ確認時刻可）</li>
+        <li><strong>「不詳（検索中）」と「詳細不明／不詳」を区別</strong>：前者は検査結果待ち、後者は検査済だが傷病名が不明。いずれも<u>死亡の原因欄を空欄にしない</u></li>
+        <li>手術・解剖で判明した診断名・部位はI欄／II欄に反映。解剖をしたら書式の「解剖」で 2 を選び主要所見（部位・性状・広がり）を記載</li>
+        <li>傷病名は略語を避ける（AMI→急性心筋梗塞、SAH→くも膜下出血 など）。「寝たきり」「ADL低下」「転倒」は傷病名でないため死因欄に記載不可</li>
+        <li>各傷病名に「発病から死亡までの期間」を記載（例：2年、3か月）</li>
+        <li>死亡したときは<strong>死亡確認時刻ではなく死亡時刻</strong>を記入</li>
       </ul>
     `,
-    noteTemplate: "I欄\n  (ア) 直接死因：                （期間：  ）\n  (イ) (ア)の原因：              （期間：  ）\n  (ウ) (イ)の原因：              （期間：  ）\nII欄（経過に影響した傷病）：\n死因の種類：1病死及び自然死\n備考：",
+    noteTemplate: "I欄（医学的因果関係の順・上ほど死に近い）\n  (ア) 直接死因：                （発病〜死亡：  ）\n  (イ) (ア)の原因：              （発病〜死亡：  ）\n  (ウ) (イ)の原因：              （発病〜死亡：  ）\n  (エ) 追加（因果関係が分かるように）：\nII欄（直接死因でないが経過に影響した傷病）：\n  ※死因でないがんはここ。原発部位・組織型・年数を記載\n悪性腫瘍：原発部位　　／組織型　　／転移 有・無（部位　　）\n手術：無・有（部位・術式・年月日　　）　解剖：無・有（主要所見　　）\n死因の種類：1 病死及び自然死 ／ …／ 12 不詳の死\nその他特に付言すべきことがら：\n死亡したとき（死亡確認時刻でなく死亡時刻）：",
     sourceTitle: "死亡診断書（死体検案書）記入マニュアル 令和8年度版（厚生労働省）",
-    sourceFile: "",
-    sourcePages: "p9〜p22（死亡の原因・参考①原死因の決め方）",
-    updatedAt: "2026-04-07（令和8年度版マニュアルを反映）",
+    sourceFile: "pdf/shibou_manual_r08.pdf",
+    sourcePages: "p9〜15（死亡の原因・I欄II欄・悪性新生物）／参考① p22（原死因の決め方）",
+    updatedAt: "2026-07-07（令和8年度版マニュアル p9〜15 を精読し反映）",
   },
 
 
@@ -1935,7 +1971,7 @@ function openFromHash() {
   }
   const details = card.querySelector("details");
   if (details) details.open = true;
-  card.scrollIntoView({ block: "start" });
+  if (typeof card.scrollIntoView === "function") card.scrollIntoView({ block: "start" });
 }
 window.addEventListener("hashchange", openFromHash);
 openFromHash();

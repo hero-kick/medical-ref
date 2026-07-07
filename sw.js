@@ -6,7 +6,7 @@
 //  例: 'medical-v1' → 'medical-v2'
 // ============================================================
 
-const CACHE_VERSION = 'medical-v11';
+const CACHE_VERSION = 'medical-v12';
 
 const FILES_TO_CACHE = [
   './',
@@ -14,6 +14,7 @@ const FILES_TO_CACHE = [
   './manifest.json',
   './icon.svg',
   './pdf/iryo_kubun_bessi8_r8.pdf',
+  './pdf/shibou_manual_r08.pdf',
   './pdf/shougai_jiritsu.pdf',
   './pdf/ninchisho_jiritsu.pdf',
   './pdf/jsnp_yakuzai_38.pdf',
