@@ -1615,6 +1615,158 @@ const ITEMS = [
     updatedAt: "2026-07-07（初版・JCCLS共用基準範囲に準拠）",
   },
 
+  // ============================================================
+  //  7. BLS（一次救命処置・医療用）
+  //  出典: JRC蘇生ガイドライン2025 / AHA 2025（中核数値は2020から不変）
+  //  参考: https://www.jrc-cpr.org/jrc-guideline-2025/
+  // ============================================================
+  {
+    id: "bls",
+    title: "BLS（一次救命処置）",
+    category: "救急",
+    shortLabel: "成人・医療用の心肺蘇生の手順と質の高いCPR",
+    keywords: ["BLS", "一次救命処置", "心肺蘇生", "CPR", "胸骨圧迫", "人工呼吸", "AED", "除細動", "心停止", "急変", "死戦期呼吸", "ROSC", "バッグバルブマスク", "救命", "蘇生", "コードブルー"],
+    summary: `
+      <p class="warn-box" style="margin-bottom:8px">成人・医療従事者用。<strong>まず施設の急変時対応方針（DNAR/急変時指示）を確認</strong>。フルコード（蘇生実施）の方針なら、以下を<u>ためらわず</u>開始する。数値は JRC蘇生ガイドライン2025（中核数値は2020から不変）。</p>
+
+      <p style="font-weight:700; margin-bottom:4px">手順</p>
+      <ol style="font-size:14px; padding-left:20px">
+        <li><strong>安全確認</strong>（周囲・自分の安全）</li>
+        <li><strong>反応の確認</strong>：肩を叩き大声で呼ぶ → 反応なし</li>
+        <li><strong>応援要請</strong>：院内コール（コードブルー等）＋<u>除細動器/AEDと救急カート</u>を依頼</li>
+        <li><strong>呼吸と頸動脈を同時に確認（10秒以内）</strong>：<span style="color:var(--warn)">死戦期呼吸（あえぎ呼吸）もCPRの適応</span>。判断に迷えば圧迫を開始（圧迫による害は小さい）</li>
+        <li><strong>ただちに胸骨圧迫を開始</strong>（下表の質を守る）</li>
+        <li><strong>人工呼吸</strong>：バッグバルブマスクで <strong>30:2</strong>（圧迫30回:換気2回）。1回の換気は約1秒、胸の上がりを確認</li>
+        <li><strong>AED/除細動器</strong>：到着したら電源→パッド装着→解析→適応ならショック→<u>直後にただちに圧迫再開</u>。2分ごとに解析・交代</li>
+        <li><strong>ROSC（自己心拍再開）</strong>または引き継ぎまで中断を最小に継続</li>
+      </ol>
+
+      <p style="font-weight:700; margin:12px 0 4px">質の高いCPR</p>
+      <table class="detail-table">
+        <thead><tr><th>要素</th><th>基準</th></tr></thead>
+        <tbody>
+          <tr><td>圧迫の位置</td><td>胸骨の下半分（胸の真ん中）</td></tr>
+          <tr><td>テンポ</td><td><strong>100〜120回/分</strong></td></tr>
+          <tr><td>深さ</td><td><strong>約5cm</strong>（少なくとも5cm、<u>6cmを超えない</u>）</td></tr>
+          <tr><td>圧迫解除</td><td>毎回<strong>完全に</strong>胸を戻す（もたれない）</td></tr>
+          <tr><td>中断</td><td>最小限（<u>10秒以内</u>）。交代は2分ごと</td></tr>
+          <tr><td>換気比</td><td>30:2。<u>高度な気道確保後</u>は圧迫を止めず、換気は<strong>6秒に1回（10回/分）</strong></td></tr>
+        </tbody>
+      </table>
+
+      <p style="font-weight:700; margin:12px 0 4px">ガイドライン2025のポイント（BLS）</p>
+      <ul style="font-size:13px; padding-left:18px">
+        <li>心停止でなくても<u>胸骨圧迫による害は小さい</u>—開始をためらわない</li>
+        <li><strong>死戦期呼吸</strong>を「呼吸なし」と同様に扱いCPRを開始</li>
+        <li>AEDは<u>自動でショックする機種（オートショックAED）</u>もある。音声指示に従う</li>
+        <li>パッドは素肌に貼る。過度な清拭で開始を遅らせない</li>
+      </ul>
+    `,
+    trickyPoints: `
+      <ul>
+        <li><strong>最初に方針確認</strong>：療養病棟では DNAR / 急変時「蘇生を行わない」指示のことがある。<u>指示が明確なら蘇生は行わず、家族・主治医の方針に従う</u>。方針が不明な急変ではフルコードで開始し、並行して確認</li>
+        <li><strong>脈の確認に10秒以上かけない</strong>：自信がなければ「心停止」とみなして圧迫開始</li>
+        <li><strong>死戦期呼吸を「呼吸あり」と誤認しない</strong>：しゃくり上げるような不規則な呼吸は心停止のサイン</li>
+        <li><strong>圧迫の質が最優先</strong>：テンポ・深さ・完全な解除・中断最小。疲労で質が落ちるため2分ごとに交代</li>
+        <li><strong>ショック後は解析やリズム確認を待たずに圧迫再開</strong>（脈拍チェックで中断を延ばさない）</li>
+        <li>単独発見時は、<u>応援と除細動器の要請を最優先</u>（成人の突然の心停止では早期除細動が予後を左右）</li>
+      </ul>
+    `,
+    noteTemplate: "発見時刻：　　　発見時状況：\n反応：なし　呼吸：なし/死戦期　脈：触知せず\nCPR開始時刻：　　　　応援要請：済（コードブルー等）\nAED/除細動：装着時刻　　　ショック回数　　回\n高度な気道確保：無/有（種類　　時刻　　）\nROSC時刻：　　　／未（搬送・引き継ぎ先　　）\n急変時方針（DNAR等）の確認：済・未（内容　　）\n記録者：",
+    sourceTitle: "JRC蘇生ガイドライン2025 一次救命処置（BLS）／AHA 2025",
+    sourceFile: "",
+    sourcePages: "BLSアルゴリズム（中核数値は2020から不変）",
+    updatedAt: "2026-07-07（初版・JRC2025を反映）",
+  },
+
+  // ============================================================
+  //  8. ACLS/ALS（二次救命処置・成人）
+  //  出典: JRC蘇生ガイドライン2025 / AHA 2025（薬剤量は2020から不変）
+  //  参考: https://www.jrc-cpr.org/jrc-guideline-2025/
+  // ============================================================
+  {
+    id: "acls",
+    title: "ACLS（二次救命処置）",
+    category: "救急",
+    shortLabel: "成人の心停止アルゴリズム・薬剤・可逆的原因",
+    keywords: ["ACLS", "ALS", "二次救命処置", "心停止アルゴリズム", "VF", "心室細動", "無脈性VT", "pVT", "PEA", "無脈性電気活動", "心静止", "アシストール", "アドレナリン", "エピネフリン", "アミオダロン", "リドカイン", "除細動", "4H4T", "可逆的原因", "気管挿管", "ETCO2", "蘇生", "急変"],
+    summary: `
+      <p class="warn-box" style="margin-bottom:8px">成人。<u>質の高いCPRとリズムに応じた早期の対応が軸</u>。数値は JRC蘇生ガイドライン2025（薬剤量は2020から不変）。まず施設の急変時方針（DNAR等）を確認。</p>
+
+      <p style="font-weight:700; margin-bottom:4px">リズムでの分岐</p>
+      <table class="detail-table">
+        <thead><tr><th>ショック<u>適応</u>（VF / 無脈性VT）</th><th>ショック<u>非適応</u>（PEA / 心静止）</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>
+              ① ショック1回 → <strong>ただちにCPR 2分</strong><br>
+              ② リズム確認、適応ならショック<br>
+              ③ <strong>2回目ショック後</strong>にアドレナリン開始、以後<u>3〜5分ごと</u><br>
+              ④ <strong>3回目ショック後</strong>にアミオダロン<u>300mg</u>（追加<u>150mg</u>）<br>
+              ⑤ CPR2分＋リズム確認を反復
+            </td>
+            <td>
+              ① CPRを継続（2分サイクル）<br>
+              ② アドレナリンを<strong>できるだけ早く</strong>投与、以後<u>3〜5分ごと</u><br>
+              ③ 2分ごとにリズム確認<br>
+              ④ ショック適応に変われば左の流れへ<br>
+              ⑤ <strong>可逆的原因（4H4T）を並行して検索・是正</strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="font-weight:700; margin:12px 0 4px">薬剤</p>
+      <table class="detail-table">
+        <thead><tr><th>薬剤</th><th>用量・タイミング</th></tr></thead>
+        <tbody>
+          <tr><td><strong>アドレナリン</strong></td><td>1mg 静注/骨髄内、<u>3〜5分ごと</u>。<span style="color:var(--warn)">非適応リズムは早期に</span>／適応リズムは2回目ショック後から</td></tr>
+          <tr><td><strong>アミオダロン</strong></td><td>初回<u>300mg</u>、必要なら追加<u>150mg</u>（難治性VF/無脈性VT）</td></tr>
+          <tr><td>リドカイン</td><td>アミオダロンの代替：1〜1.5mg/kg（追加0.5〜0.75mg/kg）</td></tr>
+        </tbody>
+      </table>
+
+      <p style="font-weight:700; margin:12px 0 4px">可逆的原因（4H4T）</p>
+      <table class="detail-table">
+        <thead><tr><th>4H</th><th>4T</th></tr></thead>
+        <tbody>
+          <tr><td>低酸素（Hypoxia）</td><td>緊張性気胸（Tension pneumothorax）</td></tr>
+          <tr><td>循環血液量減少（Hypovolemia）</td><td>心タンポナーデ（Tamponade）</td></tr>
+          <tr><td>低/高K血症・代謝（Hypo/Hyperkalemia）</td><td>中毒（Toxins）</td></tr>
+          <tr><td>低体温（Hypothermia）</td><td>血栓症（Thrombosis：肺/冠動脈）</td></tr>
+        </tbody>
+      </table>
+
+      <p style="font-weight:700; margin:12px 0 4px">除細動エネルギー</p>
+      <p style="font-size:13px">二相性：<strong>機種の推奨値</strong>（不明なら最大）。単相性：<strong>360J</strong>。ショック直後は<u>ただちにCPR再開</u>。</p>
+
+      <p style="font-weight:700; margin:12px 0 4px">ガイドライン2025のポイント（ALS）</p>
+      <ul style="font-size:13px; padding-left:18px">
+        <li>投与経路は<strong>静脈路(IV)を第一選択</strong>（確保困難なら骨髄内IO）</li>
+        <li>3回以上のショックでも持続するVF/無脈性VTに、<strong>DSED（二重連続除細動）またはパッドのベクトル変更</strong>を考慮</li>
+        <li>気管挿管後は<strong>ETCO₂波形</strong>で位置確認・CPRの質・ROSCを評価</li>
+        <li>バソプレシン単独・追加はルーチンで推奨しない。カルシウム・重炭酸もルーチン非推奨</li>
+        <li>自動胸骨圧迫装置はルーチンでは使用しない</li>
+      </ul>
+    `,
+    trickyPoints: `
+      <ul>
+        <li><strong>アドレナリンのタイミングがリズムで違う</strong>：ショック<u>非適応（PEA/心静止）は直ちに</u>、ショック<u>適応（VF/pVT）は2回目ショック後</u>から。いずれも以後3〜5分ごと</li>
+        <li><strong>アミオダロンは難治性VF/無脈性VTのみ</strong>：初回300mg・追加150mg。PEA/心静止では抗不整脈薬は使わない</li>
+        <li><strong>PEA/心静止の予後を分けるのは可逆的原因の是正</strong>：4H4Tを声に出して確認（療養病棟では脱水・高K・低酸素・感染に伴う病態が多い）</li>
+        <li><strong>ショック後は脈拍確認せず即CPR</strong>：リズム/脈の評価は2分後にまとめて行う</li>
+        <li><strong>心静止でルーチンのショックはしない</strong>（適応はVF/無脈性VTのみ）。細かいVFを心静止と誤らないようリード・感度も確認</li>
+        <li><strong>ROSC後</strong>：気道・呼吸・循環の安定化、12誘導心電図、体温管理、原因検索へ。SpO₂・血圧の目標を意識</li>
+        <li><strong>療養病棟では方針確認が最優先</strong>：DNARなら二次救命処置も行わない。家族・主治医の事前指示を確認しておく</li>
+      </ul>
+    `,
+    noteTemplate: "心停止確認時刻：　　　初期リズム：VF/無脈性VT/PEA/心静止\nCPR開始：　　　除細動：　回（時刻・エネルギー　　）\nアドレナリン：　回目　時刻　　（3〜5分ごと）\nアミオダロン：300mg 時刻　　／追加150mg 時刻　　\n投与経路：IV / IO　　高度な気道確保：無/有（ETCO₂　　）\n可逆的原因（4H4T）の検索・是正：\nROSC時刻：　　　／未（転帰・搬送先　　）\n急変時方針（DNAR等）の確認：済・未\n記録者：",
+    sourceTitle: "JRC蘇生ガイドライン2025 二次救命処置（ALS）／AHA 2025",
+    sourceFile: "",
+    sourcePages: "成人心停止アルゴリズム（薬剤量は2020から不変）",
+    updatedAt: "2026-07-07（初版・JRC2025を反映）",
+  },
+
 ]; // ITEMS 配列ここまで
 
 // ============================================================
