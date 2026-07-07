@@ -1182,6 +1182,130 @@ const ITEMS = [
     updatedAt: "2026-07-07（初版）",
   },
 
+  // ============================================================
+  //  6. 血液検査データの見方
+  //  出典: JCCLS 共用基準範囲（40項目）／ALP・LDはIFCC法
+  //  参考: https://www.jccls.org/wp-content/uploads/2020/11/public_20190222.pdf
+  //        https://www.jccls.org/news/ifcc/ （ALP・LD IFCC基準範囲）
+  // ============================================================
+  {
+    id: "ketsueki_kensa",
+    title: "血液検査データの見方",
+    category: "検査",
+    shortLabel: "基準値一覧と、異常値から考えること・パニック値",
+    keywords: ["血液検査", "採血", "検査値", "基準値", "基準範囲", "共用基準範囲", "JCCLS", "血算", "CBC", "白血球", "WBC", "ヘモグロビン", "Hb", "貧血", "血小板", "電解質", "ナトリウム", "Na", "カリウム", "K", "クロール", "腎機能", "BUN", "クレアチニン", "eGFR", "肝機能", "AST", "ALT", "ALP", "γGTP", "ビリルビン", "アルブミン", "CRP", "炎症", "血糖", "HbA1c", "脂質", "コレステロール", "中性脂肪", "尿酸", "カルシウム", "パニック値", "脱水"],
+    summary: `
+      <p class="warn-box" style="margin-bottom:8px">数値は <strong>JCCLS共用基準範囲</strong>（健常者の中央95%）。<u>「異常＝病気」ではなく「基準集団から外れた値」</u>。<strong>必ず自施設の基準値・単位・測定法を優先</strong>し、経時変化と全身状態で判断する。ALP・LDは<u>IFCC法</u>（2020年〜。旧JSCC法はALPで約3倍高く出る）。</p>
+
+      <p style="font-weight:700; margin-bottom:4px">① 血算（CBC）</p>
+      <table class="detail-table">
+        <thead><tr><th>項目</th><th>基準範囲</th><th>単位</th></tr></thead>
+        <tbody>
+          <tr><td>白血球 <strong>WBC</strong></td><td>3.3〜8.6</td><td>10³/µL</td></tr>
+          <tr><td>赤血球 <strong>RBC</strong></td><td>男 4.35〜5.55<br>女 3.86〜4.92</td><td>10⁶/µL</td></tr>
+          <tr><td>ヘモグロビン <strong>Hb</strong></td><td>男 13.7〜16.8<br>女 11.6〜14.8</td><td>g/dL</td></tr>
+          <tr><td>ヘマトクリット <strong>Ht</strong></td><td>男 40.7〜50.1<br>女 35.1〜44.4</td><td>%</td></tr>
+          <tr><td><strong>MCV</strong>（赤血球の大きさ）</td><td>83.6〜98.2</td><td>fL</td></tr>
+          <tr><td>血小板 <strong>PLT</strong></td><td>158〜348</td><td>10³/µL</td></tr>
+        </tbody>
+      </table>
+
+      <p style="font-weight:700; margin:10px 0 4px">② 電解質・腎機能</p>
+      <table class="detail-table">
+        <thead><tr><th>項目</th><th>基準範囲</th><th>単位</th></tr></thead>
+        <tbody>
+          <tr><td>ナトリウム <strong>Na</strong></td><td>138〜145</td><td>mmol/L</td></tr>
+          <tr><td>カリウム <strong>K</strong></td><td>3.6〜4.8</td><td>mmol/L</td></tr>
+          <tr><td>クロール <strong>Cl</strong></td><td>101〜108</td><td>mmol/L</td></tr>
+          <tr><td>カルシウム <strong>Ca</strong></td><td>8.8〜10.1</td><td>mg/dL</td></tr>
+          <tr><td>尿素窒素 <strong>BUN</strong></td><td>8〜20</td><td>mg/dL</td></tr>
+          <tr><td>クレアチニン <strong>Cr</strong></td><td>男 0.65〜1.07<br>女 0.46〜0.79</td><td>mg/dL</td></tr>
+          <tr><td>尿酸 <strong>UA</strong></td><td>男 3.7〜7.8<br>女 2.6〜5.5</td><td>mg/dL</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px; color:var(--text-sub); margin-top:2px">eGFR は Cr・年齢・性別から算出（本ツールの別項目「腎機能別の注意薬」も参照）。</p>
+
+      <p style="font-weight:700; margin:10px 0 4px">③ 肝・胆道系／栄養</p>
+      <table class="detail-table">
+        <thead><tr><th>項目</th><th>基準範囲</th><th>単位</th></tr></thead>
+        <tbody>
+          <tr><td>総蛋白 <strong>TP</strong></td><td>6.6〜8.1</td><td>g/dL</td></tr>
+          <tr><td>アルブミン <strong>Alb</strong></td><td>4.1〜5.1</td><td>g/dL</td></tr>
+          <tr><td><strong>AST</strong>(GOT)</td><td>13〜30</td><td>U/L</td></tr>
+          <tr><td><strong>ALT</strong>(GPT)</td><td>男 10〜42<br>女 7〜23</td><td>U/L</td></tr>
+          <tr><td><strong>LD</strong>(LDH)<span style="font-size:10px">IFCC</span></td><td>124〜222</td><td>U/L</td></tr>
+          <tr><td><strong>ALP</strong><span style="font-size:10px">IFCC</span></td><td>38〜113</td><td>U/L</td></tr>
+          <tr><td><strong>γ-GT</strong>(γ-GTP)</td><td>男 13〜64<br>女 9〜32</td><td>U/L</td></tr>
+          <tr><td>総ビリルビン <strong>T-Bil</strong></td><td>0.4〜1.5</td><td>mg/dL</td></tr>
+        </tbody>
+      </table>
+
+      <p style="font-weight:700; margin:10px 0 4px">④ 炎症・糖・脂質</p>
+      <table class="detail-table">
+        <thead><tr><th>項目</th><th>基準範囲</th><th>単位</th></tr></thead>
+        <tbody>
+          <tr><td><strong>CRP</strong></td><td>0.14 以下</td><td>mg/dL</td></tr>
+          <tr><td>血糖 <strong>GLU</strong>（空腹時）</td><td>73〜109</td><td>mg/dL</td></tr>
+          <tr><td><strong>HbA1c</strong>（NGSP）</td><td>4.9〜6.0</td><td>%</td></tr>
+          <tr><td>総コレステロール <strong>TC</strong></td><td>142〜248</td><td>mg/dL</td></tr>
+          <tr><td><strong>LDL-C</strong></td><td>65〜163</td><td>mg/dL</td></tr>
+          <tr><td><strong>HDL-C</strong></td><td>男 38〜90<br>女 48〜103</td><td>mg/dL</td></tr>
+          <tr><td>中性脂肪 <strong>TG</strong></td><td>男 40〜234<br>女 30〜117</td><td>mg/dL</td></tr>
+        </tbody>
+      </table>
+
+      <p style="font-weight:700; margin:12px 0 4px">⑤ 異常値を見たら考えること（療養病棟でよく出会う順）</p>
+      <table class="detail-table">
+        <thead><tr><th>所見</th><th>まず考えること</th></tr></thead>
+        <tbody>
+          <tr><td><strong>BUN/Cr比 上昇</strong><br>（BUN↑だがCrはそれほど↑せず、比 <u>&gt;20</u>）</td><td><strong>脱水</strong>（腎前性）。ほかに消化管出血・高蛋白・ステロイド。まず飲水・輸液と In/Out 確認</td></tr>
+          <tr><td><strong>Na低下</strong>（&lt;135）</td><td>高齢者に多い。水分過剰(SIADH・心不全)か Na喪失(利尿薬・下痢)か。<u>補正は急がない</u>（急速補正で浸透圧性脱髄）</td></tr>
+          <tr><td><strong>K異常</strong></td><td>高K＝腎機能低下・ACE/ARB・スピロノラクトン・アシドーシス→<span style="color:var(--warn)">心電図</span>。低K＝利尿薬・下痢・嘔吐</td></tr>
+          <tr><td><strong>Hb低下（貧血）</strong></td><td>MCVで分類：小球性(&lt;80)＝鉄欠乏・慢性出血 ／ 正球性＝慢性疾患・腎性・出血急性期 ／ 大球性(&gt;100)＝B12/葉酸欠乏</td></tr>
+          <tr><td><strong>WBC上昇</strong></td><td>感染・炎症・ステロイド。<u>高齢者・重症感染ではむしろ減ることも</u>。CRP・体温・局所所見と併せる</td></tr>
+          <tr><td><strong>CRP上昇</strong></td><td>炎症の程度の目安（数時間〜遅れて上昇、ピークは<u>2〜3日</u>）。原因検索とセット。軽度上昇は非特異的</td></tr>
+          <tr><td><strong>Alb低下</strong></td><td>低栄養・慢性炎症・肝合成低下。<u>Ca・薬物血中濃度の補正</u>に影響。栄養評価の基本指標</td></tr>
+          <tr><td><strong>肝酵素上昇</strong></td><td>AST/ALT優位＝肝細胞障害（薬剤性・うっ血・肝炎） ／ ALP/γ-GT優位＝胆道系・胆汁うっ滞・薬剤性</td></tr>
+          <tr><td><strong>血糖・HbA1c</strong></td><td>HbA1cは過去<u>1〜2か月</u>の平均。貧血・輸血・腎性貧血で見かけ上ずれる。<u>低血糖(&lt;70)は要対応</u></td></tr>
+        </tbody>
+      </table>
+
+      <p style="font-weight:700; margin:12px 0 4px">⑥ パニック値の目安（直ちに医師報告・確認）</p>
+      <table class="detail-table">
+        <thead><tr><th>項目</th><th>目安</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Na</strong></td><td><span style="color:var(--warn)">&lt;120 または &gt;160</span> mmol/L</td></tr>
+          <tr><td><strong>K</strong></td><td><span style="color:var(--warn)">&lt;2.5 または &gt;6.0</span> mmol/L（高Kは心停止リスク）</td></tr>
+          <tr><td><strong>血糖</strong></td><td><span style="color:var(--warn)">&lt;50 または &gt;400</span> mg/dL</td></tr>
+          <tr><td><strong>Ca</strong></td><td><span style="color:var(--warn)">&lt;6.5 または &gt;12</span> mg/dL（Albで補正）</td></tr>
+          <tr><td><strong>Hb</strong></td><td><span style="color:var(--warn)">&lt;5〜6</span> g/dL（急な低下は出血を疑う）</td></tr>
+          <tr><td><strong>血小板</strong></td><td><span style="color:var(--warn)">&lt;3〜5万</span> /µL（出血傾向）</td></tr>
+          <tr><td><strong>WBC</strong></td><td><span style="color:var(--warn)">&lt;1,000</span> /µL（発熱性好中球減少症に注意）</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px; color:var(--text-sub); margin-top:4px">※パニック値の閾値は施設・文献で幅がある。<u>必ず自施設の基準に従う</u>。数値だけでなく「急な変化」「症状の有無」を重視。</p>
+    `,
+    trickyPoints: `
+      <ul>
+        <li><strong>基準範囲＝健常者の95%であって「正常/異常」の線引きではない</strong>：20項目測れば1つは偶然外れる。1点の軽度逸脱に飛びつかず、<u>経過（トレンド）</u>で見る</li>
+        <li><strong>Caは必ずAlbで補正</strong>：低アルブミン血症では実際よりCaが低く出る。<u>補正Ca ＝ 実測Ca ＋ 0.8 ×（4.0 − Alb）</u>（Alb&lt;4.0のとき）</li>
+        <li><strong>脱水の見抜き方</strong>：BUN/Cr比 &gt;20、Na・Alb・Hbが「揃って上昇（濃縮）」、尿量減少。療養病棟の発熱・食事量低下では最初に疑う</li>
+        <li><strong>ALP・LDはIFCC法（2020年〜）</strong>：旧JSCC法の検査票やレセプトを見るとALPは約3倍高い。<u>基準値ごと確認</u>。ALP高値は胆道系のほか<u>骨（骨折治癒・骨転移）</u>でも上がる</li>
+        <li><strong>高齢者の感染はマスクされやすい</strong>：WBC・CRPが上がりきらない、発熱しないこともある。<u>食欲低下・活気低下・せん妄</u>など非典型的サインを軽視しない</li>
+        <li><strong>HbA1cが当てにならない場面</strong>：貧血・輸血後・鉄剤開始後・腎性貧血・エリスロポエチン使用で見かけ上ずれる。血糖の実測やグリコアルブミンを併用</li>
+        <li><strong>Kの偽高値（溶血）</strong>：採血手技（駆血が長い・細い針・溶血）でKが高く出ることがある。症状・心電図と合わなければ再検を考慮</li>
+        <li><strong>男女で基準が違う項目</strong>：RBC・Hb・Ht・Cr・UA・γ-GT・HDL・TG。特に<u>Crは女性で低め</u>＝筋肉量が少ない高齢女性ではCr正常でも腎機能低下があり得る（eGFRで評価）</li>
+        <li><strong>CRPは時間差がある</strong>：発症直後は上がっていない。数時間〜半日遅れ、ピークは2〜3日。<u>「発症初日のCRP陰性」で感染を否定しない</u></li>
+        <li><strong>単位と桁の取り違え</strong>：WBC・PLTは 10³/µL 表記（例 PLT 158＝15.8万/µL）。院内表記と換算に注意</li>
+      </ul>
+    `,
+    noteTemplate: "採血日：\n血算 WBC　　 Hb　　 PLT　　（前回比：　　）\n電解質 Na　 K　 Cl　 Ca（補正　　）\n腎 BUN　 Cr　 eGFR　　 BUN/Cr比　　\n肝 AST　 ALT　 ALP　 γGT　 T-Bil　 Alb　\n炎症・糖 CRP　　 血糖　　 HbA1c　　\n目立つ異常と考えた原因：\n対応（輸液・薬剤調整・再検・画像/専門科など）：\n医師報告：要 / 不要（報告先：　　）",
+    sourceTitle: "JCCLS 共用基準範囲（日本臨床検査標準協議会）／ALP・LDはIFCC法",
+    sourceFile: "",
+    sourcePages: "共用基準範囲一覧（40項目）",
+    updatedAt: "2026-07-07（初版・JCCLS共用基準範囲に準拠）",
+  },
+
 ]; // ITEMS 配列ここまで
 
 // ============================================================
